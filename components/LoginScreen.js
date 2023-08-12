@@ -5,12 +5,9 @@ import {
   View,
   KeyboardAvoidingView,
 } from "react-native";
-import RegisterForm from "./RegisterForm";
-// import { useState } from "react";
+import LoginForm from "./LoginForm";
 
-const RegistrationScreen = ({
-  name,
-  onChangeName,
+const LoginScreen = ({
   email,
   onChangeEmail,
   password,
@@ -19,7 +16,6 @@ const RegistrationScreen = ({
   setIsShowKeydoard,
 }) => {
   const bgrImg = require("../img/background.jpg");
-  // const avaImg = require('../img/avatar.jpg');
   return (
     <>
       <View style={styles.bgrContainer}>
@@ -28,13 +24,8 @@ const RegistrationScreen = ({
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              <View>
-                <View style={styles.avatarBox}></View>
-              </View>
-              <Text style={styles.title}>Реєстрація</Text>
-              <RegisterForm
-                name={name}
-                onChangeName={onChangeName}
+              <Text style={styles.title}>Увійти</Text>
+              <LoginForm
                 email={email}
                 onChangeEmail={onChangeEmail}
                 password={password}
@@ -67,31 +58,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
-  avatarBox: {
-    position: "absolute",
-    top: -60,
-    right: "33%",
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F6",
-  },
   title: {
     color: "#212121",
     textAlign: "center",
     fontSize: 30,
     fontStyle: "normal",
-    fontWeight: "bold",
+    fontWeight: "500",
     letterSpacing: 0.3,
-    marginTop: 92,
-    marginBottom: 33,
+    marginVertical: 33,
   },
 });
-
-export default RegistrationScreen;
-//  {
-/* <Image
-                style={styles.avatar}
-                source={require("../img/avatar.jpg")}
-              /> */
-//  }
+export default LoginScreen;

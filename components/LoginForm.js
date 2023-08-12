@@ -1,11 +1,8 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
-// import { useState } from "react";
 
-const RegisterForm = ({
-  name,
-  onChangeName,
+const LoginForm = ({
   email,
   onChangeEmail,
   password,
@@ -13,19 +10,8 @@ const RegisterForm = ({
   isShowKeyboard,
   setIsShowKeydoard,
 }) => {
-  // const [isShowKeyboard, setIsShowKeydoard] = useState(false);
-
   return (
     <>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeName}
-        value={name}
-        placeholder="Логін"
-        placeholderTextColor="#BDBDBD"
-        onFocus={() => setIsShowKeydoard(true)}
-        // textContentType="name"
-      />
       <TextInput
         style={styles.input}
         onChangeText={onChangeEmail}
@@ -61,7 +47,7 @@ const RegisterForm = ({
         }}
       >
         <CustomButton
-          title="Зареєстуватися"
+          title="Увійти"
           onPress={() => console.log("Custom button clicked")}
         />
       </View>
@@ -71,8 +57,11 @@ const RegisterForm = ({
           display: isShowKeyboard ? "none" : "flex",
         }}
       >
-        <Text>Вже є акаунт?</Text>
-        <CustomLink text=" Увійти" onPress={() => console.log("Login Page")} />
+        <Text>Немає акаунту?</Text>
+        <CustomLink
+          text=" Зареєструватися"
+          onPress={() => console.log("Login Page")}
+        />
       </View>
     </>
   );
@@ -102,8 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginVertical: 10,
-    marginBottom: 45,
+    marginBottom: 111,
   },
 });
-
-export default RegisterForm;
+export default LoginForm;
