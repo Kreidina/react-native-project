@@ -1,46 +1,61 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
+import { useFonts } from "expo-font";
 import {
   Keyboard,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import RegistrationScreen from "./components/RegistrationScreen";
-import LoginScreen from "./components/LoginScreen";
+
+import { LoginScreen, PostsScreen, RegistrationScreen } from "./components";
+
+const initialRegState = {
+  name: "",
+  email: "",
+  password: "",
+};
+
+const initialLogState = {
+  email: "",
+  password: "",
+};
 
 export default function App() {
-  const [name, onChangeName] = useState("");
-  const [email, onChangeEmail] = useState("");
-  const [password, onChangePassword] = useState("");
-  // const [avatarImg, onChangeavatarImg] = useState(false);
+  const [stateReg, setStateReg] = useState(initialRegState);
+  const [stateLog, setStateLog] = useState(initialLogState);
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
     Keyboard.dismiss();
   };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        {/* <LoginScreen
-          email={email}
-          onChangeEmail={onChangeEmail}
-          password={password}
-          onChangePassword={onChangePassword}
-          isShowKeyboard={isShowKeyboard}
-          setIsShowKeydoard={setIsShowKeydoard}
-        /> */}
         <RegistrationScreen
-          name={name}
-          onChangeName={onChangeName}
-          email={email}
-          onChangeEmail={onChangeEmail}
-          password={password}
-          onChangePassword={onChangePassword}
+          stateReg={stateReg}
+          setStateReg={setStateReg}
           isShowKeyboard={isShowKeyboard}
           setIsShowKeydoard={setIsShowKeydoard}
         />
+        {/* <LoginScreen
+          stateLog={stateLog}
+          setStateLog={setStateLog}
+          isShowKeyboard={isShowKeyboard}
+          setIsShowKeydoard={setIsShowKeydoard}
+        /> */}
+        {/* <PostsScreen /> */}
         <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>

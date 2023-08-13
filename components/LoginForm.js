@@ -1,68 +1,92 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
+import { useState } from "react";
+
+const initialLogState = {
+  email: "",
+  password: "",
+};
 
 const LoginForm = ({
-  email,
-  onChangeEmail,
-  password,
-  onChangePassword,
+  stateLog,
+  setStateLog,
   isShowKeyboard,
   setIsShowKeydoard,
 }) => {
+  const [focusedInput, setFocusedInput] = useState(null);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const handelFocus = (inputName) => {
+    setIsShowKeydoard(true);
+    setFocusedInput(inputName);
+  };
+
+  const handelBlur = () => {
+    setIsShowKeydoard(false);
+    setFocusedInput(null);
+  };
+
+  const secureTextEntryToggle = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  const handelSubmit = () => {
+    if (!stateLog.email || !stateLog.password) return;
+    console.log(stateLog);
+    setStateLog(initialLogState);
+  };
+
   return (
     <>
       <TextInput
-        style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
+        style={[styles.input, focusedInput === "input1" && styles.inputFocus]}
+        onChangeText={(value) =>
+          setStateLog((prevState) => ({ ...prevState, email: value }))
+        }
+        value={stateLog.email}
         placeholder="Адреса електронної пошти"
         placeholderTextColor="#BDBDBD"
         keyboardType="email-address"
-        onFocus={() => {
-          setIsShowKeydoard(true);
-        }}
-        // textContentType="emailAddress"
+        onFocus={() => handelFocus("input1")}
+        onBlur={handelBlur}
+        cursorColor="#FF6C00"
       />
       <View>
         <TextInput
-          style={styles.input}
-          onChangeText={onChangePassword}
-          value={password}
+          style={[styles.input, focusedInput === "input2" && styles.inputFocus]}
+          onChangeText={(value) =>
+            setStateLog((prevState) => ({ ...prevState, password: value }))
+          }
+          value={stateLog.password}
           placeholder="Пароль"
           placeholderTextColor="#BDBDBD"
-          secureTextEntry={true}
-          onFocus={() => setIsShowKeydoard(true)}
-          // keyboardType="visible-password"
-          // textContentType="password"
+          secureTextEntry={secureTextEntry}
+          onFocus={() => handelFocus("input2")}
+          onBlur={handelBlur}
+          cursorColor="#FF6C00"
         />
         <View style={styles.showLink}>
-          <CustomLink text="Показати" onPress={() => console.log("show")} />
+          <CustomLink
+            text={secureTextEntry ? "Показати" : "Приховати"}
+            onPress={secureTextEntryToggle}
+          />
         </View>
       </View>
-      <View
-        style={{
-          ...styles.formButton,
-          display: isShowKeyboard ? "none" : "flex",
-        }}
-      >
-        <CustomButton
-          title="Увійти"
-          onPress={() => console.log("Custom button clicked")}
-        />
-      </View>
-      <View
-        style={{
-          ...styles.linkForm,
-          display: isShowKeyboard ? "none" : "flex",
-        }}
-      >
-        <Text>Немає акаунту?</Text>
-        <CustomLink
-          text=" Зареєструватися"
-          onPress={() => console.log("Login Page")}
-        />
-      </View>
+      {!isShowKeyboard && (
+        <>
+          <View style={styles.formButton}>
+            <CustomButton title="Увійти" onPress={handelSubmit} />
+          </View>
+          <View style={styles.linkForm}>
+            <Text style={styles.linkText}>Немає акаунту?</Text>
+            <CustomLink
+              text=" Зареєструватися"
+              onPress={() => console.log("singup page")}
+            />
+          </View>
+        </>
+      )}
     </>
   );
 };
@@ -77,6 +101,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     backgroundColor: "#F6F6F6",
   },
+  inputFocus: {
+    borderColor: "#FF6C00",
+    backgroundColor: "#FFF",
+  },
   showLink: {
     position: "absolute",
     right: 16,
@@ -86,12 +114,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 27,
   },
-
   linkForm: {
     flexDirection: "row",
     justifyContent: "center",
-    marginVertical: 10,
     marginBottom: 111,
+  },
+  linkText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#1B4371",
   },
 });
 export default LoginForm;

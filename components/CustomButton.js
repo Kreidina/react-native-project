@@ -15,7 +15,6 @@ const CustomButton = ({ title, onPress }) => {
 const stylesB = StyleSheet.create({
   button: {
     width: "100%",
-    // height: 50,
     borderRadius: 100,
     backgroundColor: "#FF6C00",
   },
@@ -23,11 +22,9 @@ const stylesB = StyleSheet.create({
     textAlign: "center",
     color: "#fff",
     marginVertical: 16,
-    // font-family: Roboto;
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
-    // font-style: normal;
-    fontWeight: "normal",
-    // line-height: normal
+    fontWeight: "400",
   },
 });
 export default CustomButton;

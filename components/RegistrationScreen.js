@@ -4,22 +4,21 @@ import {
   Text,
   View,
   KeyboardAvoidingView,
+  Image,
+  TouchableOpacity,
 } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import RegisterForm from "./RegisterForm";
-// import { useState } from "react";
 
-const RegistrationScreen = ({
-  name,
-  onChangeName,
-  email,
-  onChangeEmail,
-  password,
-  onChangePassword,
+export const RegistrationScreen = ({
+  stateReg,
+  setStateReg,
   isShowKeyboard,
   setIsShowKeydoard,
 }) => {
-  const bgrImg = require("../img/background.jpg");
-  // const avaImg = require('../img/avatar.jpg');
+  const bgrImg = require("../assets/img/background.jpg");
+  const avaImg = require("../assets/img/avatar.jpg");
+
   return (
     <>
       <View style={styles.bgrContainer}>
@@ -29,16 +28,38 @@ const RegistrationScreen = ({
               behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
               <View>
-                <View style={styles.avatarBox}></View>
+                {!isShowKeyboard ? (
+                  <View style={styles.avatarBox}>
+                    <AntDesign
+                      name="pluscircleo"
+                      size={25}
+                      style={styles.avatarIcon}
+                    />
+                    <TouchableOpacity
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      onPress={() => console.log("add")}
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.avatarBox}>
+                    <Image source={avaImg} style={styles.avaImg}></Image>
+
+                    <AntDesign
+                      name="closecircleo"
+                      size={25}
+                      style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
+                    />
+                    <TouchableOpacity
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      onPress={() => console.log("delete")}
+                    />
+                  </View>
+                )}
               </View>
               <Text style={styles.title}>Реєстрація</Text>
               <RegisterForm
-                name={name}
-                onChangeName={onChangeName}
-                email={email}
-                onChangeEmail={onChangeEmail}
-                password={password}
-                onChangePassword={onChangePassword}
+                stateReg={stateReg}
+                setStateReg={setStateReg}
                 isShowKeyboard={isShowKeyboard}
                 setIsShowKeydoard={setIsShowKeydoard}
               />
@@ -55,7 +76,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFF",
   },
-
   bgrImage: {
     flex: 1,
     resizeMode: "contain",
@@ -76,22 +96,33 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#F6F6F6",
   },
+  avaImg: {
+    borderRadius: 16,
+  },
+  avatarIcon: {
+    position: "absolute",
+    right: -12,
+    bottom: 14,
+    color: "#FF6C00",
+  },
+  avatarLink: {
+    width: 25,
+    height: 25,
+  },
+  deleteIcon: {
+    backgroundColor: "#FFF",
+    color: "#E8E8E8",
+    borderRadius: 55,
+  },
   title: {
     color: "#212121",
     textAlign: "center",
     fontSize: 30,
     fontStyle: "normal",
-    fontWeight: "bold",
+    fontFamily: "Roboto-Medium",
+    fontWeight: "500",
     letterSpacing: 0.3,
     marginTop: 92,
     marginBottom: 33,
   },
 });
-
-export default RegistrationScreen;
-//  {
-/* <Image
-                style={styles.avatar}
-                source={require("../img/avatar.jpg")}
-              /> */
-//  }

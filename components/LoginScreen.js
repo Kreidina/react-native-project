@@ -7,15 +7,13 @@ import {
 } from "react-native";
 import LoginForm from "./LoginForm";
 
-const LoginScreen = ({
-  email,
-  onChangeEmail,
-  password,
-  onChangePassword,
+export const LoginScreen = ({
+  stateLog,
+  setStateLog,
   isShowKeyboard,
   setIsShowKeydoard,
 }) => {
-  const bgrImg = require("../img/background.jpg");
+  const bgrImg = require("../assets/img/background.jpg");
   return (
     <>
       <View style={styles.bgrContainer}>
@@ -26,10 +24,8 @@ const LoginScreen = ({
             >
               <Text style={styles.title}>Увійти</Text>
               <LoginForm
-                email={email}
-                onChangeEmail={onChangeEmail}
-                password={password}
-                onChangePassword={onChangePassword}
+                stateLog={stateLog}
+                setStateLog={setStateLog}
                 isShowKeyboard={isShowKeyboard}
                 setIsShowKeydoard={setIsShowKeydoard}
               />
@@ -46,7 +42,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFF",
   },
-
   bgrImage: {
     flex: 1,
     resizeMode: "contain",
@@ -59,6 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   title: {
+    fontFamily: "Roboto-Medium",
     color: "#212121",
     textAlign: "center",
     fontSize: 30,
@@ -68,4 +64,3 @@ const styles = StyleSheet.create({
     marginVertical: 33,
   },
 });
-export default LoginScreen;
