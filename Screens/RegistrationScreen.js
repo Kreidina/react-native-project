@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Image,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import RegisterForm from "./RegisterForm";
@@ -24,46 +25,43 @@ export const RegistrationScreen = ({
       <View style={styles.bgrContainer}>
         <ImageBackground source={bgrImg} style={styles.bgrImage}>
           <View style={styles.formContainer}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
-              <View>
-                {!isShowKeyboard ? (
-                  <View style={styles.avatarBox}>
-                    <AntDesign
-                      name="pluscircleo"
-                      size={25}
-                      style={styles.avatarIcon}
-                    />
-                    <TouchableOpacity
-                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      onPress={() => console.log("add")}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.avatarBox}>
-                    <Image source={avaImg} style={styles.avaImg}></Image>
+            <View>
+              {!isShowKeyboard ? (
+                <View style={styles.avatarBox}>
+                  <AntDesign
+                    name="pluscircleo"
+                    size={25}
+                    style={styles.avatarIcon}
+                  />
+                  <TouchableOpacity
+                    style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                    onPress={() => console.log("add")}
+                  />
+                </View>
+              ) : (
+                <View style={styles.avatarBox}>
+                  <Image source={avaImg} style={styles.avaImg}></Image>
 
-                    <AntDesign
-                      name="closecircleo"
-                      size={25}
-                      style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
-                    />
-                    <TouchableOpacity
-                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      onPress={() => console.log("delete")}
-                    />
-                  </View>
-                )}
-              </View>
-              <Text style={styles.title}>Реєстрація</Text>
-              <RegisterForm
-                stateReg={stateReg}
-                setStateReg={setStateReg}
-                isShowKeyboard={isShowKeyboard}
-                setIsShowKeydoard={setIsShowKeydoard}
-              />
-            </KeyboardAvoidingView>
+                  <AntDesign
+                    name="closecircleo"
+                    size={25}
+                    style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
+                  />
+                  <TouchableOpacity
+                    style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                    onPress={() => console.log("delete")}
+                  />
+                </View>
+              )}
+            </View>
+            <Text style={styles.title}>Реєстрація</Text>
+
+            <RegisterForm
+              stateReg={stateReg}
+              setStateReg={setStateReg}
+              isShowKeyboard={isShowKeyboard}
+              setIsShowKeydoard={setIsShowKeydoard}
+            />
           </View>
         </ImageBackground>
       </View>

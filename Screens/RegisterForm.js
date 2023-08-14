@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
 import { useState } from "react";
@@ -40,52 +46,59 @@ const RegisterForm = ({
 
   return (
     <>
-      <TextInput
-        style={[styles.input, focusedInput === "input1" && styles.inputFocus]}
-        onChangeText={(value) =>
-          setStateReg((prevState) => ({ ...prevState, name: value }))
-        }
-        value={stateReg.name}
-        placeholder="Логін"
-        placeholderTextColor="#BDBDBD"
-        onFocus={() => handelFocus("input1")}
-        onBlur={handelBlur}
-        cursorColor="#FF6C00"
-      />
-      <TextInput
-        style={[styles.input, focusedInput === "input2" && styles.inputFocus]}
-        onChangeText={(value) =>
-          setStateReg((prevState) => ({ ...prevState, email: value }))
-        }
-        value={stateReg.email}
-        placeholder="Адреса електронної пошти"
-        placeholderTextColor="#BDBDBD"
-        keyboardType="email-address"
-        onFocus={() => handelFocus("input2")}
-        onBlur={handelBlur}
-        cursorColor="#FF6C00"
-      />
-      <View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
         <TextInput
-          style={[styles.input, focusedInput === "input3" && styles.inputFocus]}
+          style={[styles.input, focusedInput === "input1" && styles.inputFocus]}
           onChangeText={(value) =>
-            setStateReg((prevState) => ({ ...prevState, password: value }))
+            setStateReg((prevState) => ({ ...prevState, name: value }))
           }
-          value={stateReg.password}
-          placeholder="Пароль"
+          value={stateReg.name}
+          placeholder="Логін"
           placeholderTextColor="#BDBDBD"
-          secureTextEntry={secureTextEntry}
-          onFocus={() => handelFocus("input3")}
+          onFocus={() => handelFocus("input1")}
           onBlur={handelBlur}
           cursorColor="#FF6C00"
         />
-        <View style={styles.showLink}>
-          <CustomLink
-            text={secureTextEntry ? "Показати" : "Приховати"}
-            onPress={secureTextEntryToggle}
+        <TextInput
+          style={[styles.input, focusedInput === "input2" && styles.inputFocus]}
+          onChangeText={(value) =>
+            setStateReg((prevState) => ({ ...prevState, email: value }))
+          }
+          value={stateReg.email}
+          placeholder="Адреса електронної пошти"
+          placeholderTextColor="#BDBDBD"
+          keyboardType="email-address"
+          onFocus={() => handelFocus("input2")}
+          onBlur={handelBlur}
+          cursorColor="#FF6C00"
+        />
+        <View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === "input3" && styles.inputFocus,
+            ]}
+            onChangeText={(value) =>
+              setStateReg((prevState) => ({ ...prevState, password: value }))
+            }
+            value={stateReg.password}
+            placeholder="Пароль"
+            placeholderTextColor="#BDBDBD"
+            secureTextEntry={secureTextEntry}
+            onFocus={() => handelFocus("input3")}
+            onBlur={handelBlur}
+            cursorColor="#FF6C00"
           />
+          <View style={styles.showLink}>
+            <CustomLink
+              text={secureTextEntry ? "Показати" : "Приховати"}
+              onPress={secureTextEntryToggle}
+            />
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       {!isShowKeyboard && (
         <>
           <View style={styles.formButton}>

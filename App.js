@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-import { LoginScreen, PostsScreen, RegistrationScreen } from "./components";
+import { LoginScreen, PostsScreen, RegistrationScreen } from "./Screens";
 
 const initialRegState = {
   name: "",
