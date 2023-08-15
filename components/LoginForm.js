@@ -1,19 +1,15 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
 import { useState } from "react";
 
-const initialLogState = {
+const initialState = {
   email: "",
   password: "",
 };
 
-const LoginForm = ({
-  stateLog,
-  setStateLog,
-  isShowKeyboard,
-  setIsShowKeydoard,
-}) => {
+const LoginForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
+  const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
@@ -22,19 +18,14 @@ const LoginForm = ({
     setFocusedInput(inputName);
   };
 
-  const handelBlur = () => {
-    setIsShowKeydoard(false);
-    setFocusedInput(null);
-  };
-
   const secureTextEntryToggle = () => {
     setSecureTextEntry(!secureTextEntry);
   };
 
   const handelSubmit = () => {
-    if (!stateLog.email || !stateLog.password) return;
-    console.log(stateLog);
-    setStateLog(initialLogState);
+    if (!state.email || !state.password) return;
+    console.log(state);
+    setState(initialLogState);
   };
 
   return (
@@ -42,28 +33,26 @@ const LoginForm = ({
       <TextInput
         style={[styles.input, focusedInput === "input1" && styles.inputFocus]}
         onChangeText={(value) =>
-          setStateLog((prevState) => ({ ...prevState, email: value }))
+          setState((prevState) => ({ ...prevState, email: value }))
         }
-        value={stateLog.email}
+        value={state.email}
         placeholder="Адреса електронної пошти"
         placeholderTextColor="#BDBDBD"
         keyboardType="email-address"
         onFocus={() => handelFocus("input1")}
-        onBlur={handelBlur}
         cursorColor="#FF6C00"
       />
       <View>
         <TextInput
           style={[styles.input, focusedInput === "input2" && styles.inputFocus]}
           onChangeText={(value) =>
-            setStateLog((prevState) => ({ ...prevState, password: value }))
+            setState((prevState) => ({ ...prevState, password: value }))
           }
-          value={stateLog.password}
+          value={state.password}
           placeholder="Пароль"
           placeholderTextColor="#BDBDBD"
           secureTextEntry={secureTextEntry}
           onFocus={() => handelFocus("input2")}
-          onBlur={handelBlur}
           cursorColor="#FF6C00"
         />
         <View style={styles.showLink}>
@@ -74,18 +63,9 @@ const LoginForm = ({
         </View>
       </View>
       {!isShowKeyboard && (
-        <>
-          <View style={styles.formButton}>
-            <CustomButton title="Увійти" onPress={handelSubmit} />
-          </View>
-          <View style={styles.linkForm}>
-            <Text style={styles.linkText}>Немає акаунту?</Text>
-            <CustomLink
-              text=" Зареєструватися"
-              onPress={() => console.log("singup page")}
-            />
-          </View>
-        </>
+        <View style={styles.formButton}>
+          <CustomButton title="Увійти" onPress={handelSubmit} />
+        </View>
       )}
     </>
   );
@@ -113,17 +93,6 @@ const styles = StyleSheet.create({
   formButton: {
     marginBottom: 16,
     marginTop: 27,
-  },
-  linkForm: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 111,
-  },
-  linkText: {
-    fontFamily: "Roboto-Regular",
-    fontSize: 16,
-    fontWeight: "400",
-    color: "#1B4371",
   },
 });
 export default LoginForm;
