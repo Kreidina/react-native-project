@@ -1,7 +1,6 @@
 import {
   KeyboardAvoidingView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -9,18 +8,14 @@ import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
 import { useState } from "react";
 
-const initialRegState = {
+const initialState = {
   name: "",
   email: "",
   password: "",
 };
 
-const RegisterForm = ({
-  stateReg,
-  setStateReg,
-  isShowKeyboard,
-  setIsShowKeydoard,
-}) => {
+const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
+  const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
@@ -29,19 +24,14 @@ const RegisterForm = ({
     setFocusedInput(inputName);
   };
 
-  const handelBlur = () => {
-    setIsShowKeydoard(false);
-    setFocusedInput(null);
-  };
-
   const secureTextEntryToggle = () => {
     setSecureTextEntry(!secureTextEntry);
   };
 
   const handelSubmit = () => {
-    if (!stateReg.email || !stateReg.password || !stateReg.name) return;
-    console.log(stateReg);
-    setStateReg(initialRegState);
+    if (!state.email || !state.password || !state.name) return;
+    console.log(state);
+    setState(initialState);
   };
 
   return (
@@ -52,26 +42,24 @@ const RegisterForm = ({
         <TextInput
           style={[styles.input, focusedInput === "input1" && styles.inputFocus]}
           onChangeText={(value) =>
-            setStateReg((prevState) => ({ ...prevState, name: value }))
+            setState((prevState) => ({ ...prevState, name: value }))
           }
-          value={stateReg.name}
+          value={state.name}
           placeholder="Логін"
           placeholderTextColor="#BDBDBD"
           onFocus={() => handelFocus("input1")}
-          onBlur={handelBlur}
           cursorColor="#FF6C00"
         />
         <TextInput
           style={[styles.input, focusedInput === "input2" && styles.inputFocus]}
           onChangeText={(value) =>
-            setStateReg((prevState) => ({ ...prevState, email: value }))
+            setState((prevState) => ({ ...prevState, email: value }))
           }
-          value={stateReg.email}
+          value={state.email}
           placeholder="Адреса електронної пошти"
           placeholderTextColor="#BDBDBD"
           keyboardType="email-address"
           onFocus={() => handelFocus("input2")}
-          onBlur={handelBlur}
           cursorColor="#FF6C00"
         />
         <View>
@@ -81,14 +69,13 @@ const RegisterForm = ({
               focusedInput === "input3" && styles.inputFocus,
             ]}
             onChangeText={(value) =>
-              setStateReg((prevState) => ({ ...prevState, password: value }))
+              setState((prevState) => ({ ...prevState, password: value }))
             }
-            value={stateReg.password}
+            value={state.password}
             placeholder="Пароль"
             placeholderTextColor="#BDBDBD"
             secureTextEntry={secureTextEntry}
             onFocus={() => handelFocus("input3")}
-            onBlur={handelBlur}
             cursorColor="#FF6C00"
           />
           <View style={styles.showLink}>
@@ -100,18 +87,9 @@ const RegisterForm = ({
         </View>
       </KeyboardAvoidingView>
       {!isShowKeyboard && (
-        <>
-          <View style={styles.formButton}>
-            <CustomButton title="Зареєстуватися" onPress={handelSubmit} />
-          </View>
-          <View style={styles.linkForm}>
-            <Text style={styles.linkText}>Вже є акаунт?</Text>
-            <CustomLink
-              text=" Увійти"
-              onPress={() => console.log("Login Page")}
-            />
-          </View>
-        </>
+        <View style={styles.formButton}>
+          <CustomButton title="Зареєстуватися" onPress={handelSubmit} />
+        </View>
       )}
     </>
   );
@@ -139,17 +117,6 @@ const styles = StyleSheet.create({
   formButton: {
     marginBottom: 16,
     marginTop: 27,
-  },
-  linkForm: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 45,
-  },
-  linkText: {
-    fontFamily: "Roboto-Regular",
-    fontSize: 16,
-    fontWeight: "400",
-    color: "#1B4371",
   },
 });
 
