@@ -17,12 +17,17 @@ import { AntDesign } from "@expo/vector-icons";
 import RegisterForm from "../../components/RegisterForm";
 import CustomLink from "../../components/CustomLink";
 
-export const RegistrationScreen = ({ navigation }) => {
+export const RegistrationScreen = ({ navigation, route }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+  const handleAuth = route.params.handleAuth;
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
     Keyboard.dismiss();
+  };
+
+  const navigatePage = (pageName) => {
+    navigation.navigate(pageName);
   };
 
   const bgrImg = require("../../assets/img/background.jpg");
@@ -40,28 +45,32 @@ export const RegistrationScreen = ({ navigation }) => {
                 <View>
                   {!isShowKeyboard ? (
                     <View style={styles.avatarBox}>
-                      <AntDesign
-                        name="pluscircleo"
-                        size={25}
-                        style={styles.avatarIcon}
-                      />
                       <TouchableOpacity
+                        activeOpacity={0.8}
                         style={{ ...styles.avatarIcon, ...styles.avatarLink }}
                         onPress={() => console.log("add")}
-                      />
+                      >
+                        <AntDesign
+                          name="pluscircleo"
+                          size={25}
+                          style={styles.avatarIcon}
+                        />
+                      </TouchableOpacity>
                     </View>
                   ) : (
                     <View style={styles.avatarBox}>
                       <Image source={avaImg} style={styles.avaImg}></Image>
-                      <AntDesign
-                        name="closecircleo"
-                        size={25}
-                        style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
-                      />
                       <TouchableOpacity
                         style={{ ...styles.avatarIcon, ...styles.avatarLink }}
                         onPress={() => console.log("delete")}
-                      />
+                        activeOpacity={0.8}
+                      >
+                        <AntDesign
+                          name="closecircleo"
+                          size={25}
+                          style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
+                        />
+                      </TouchableOpacity>
                     </View>
                   )}
                 </View>
@@ -71,13 +80,15 @@ export const RegistrationScreen = ({ navigation }) => {
                 <RegisterForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
+                  navigatePage={navigatePage}
+                  handleAuth={handleAuth}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>
-                    <Text style={styles.linkText}>Вже є акаунт?</Text>
+                    <Text style={styles.linkText}>Вже є акаунт? </Text>
                     <CustomLink
-                      text=" Увійти"
-                      onPress={() => navigation.navigate("Login")}
+                      text="Увійти"
+                      onPress={() => navigatePage("Login")}
                     />
                   </View>
                 )}
@@ -124,19 +135,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   avatarIcon: {
+    color: "#FF6C00",
+    backgroundColor: "#FFF",
+    borderRadius: 55,
+  },
+  avatarLink: {
     position: "absolute",
     right: -12,
     bottom: 14,
-    color: "#FF6C00",
-  },
-  avatarLink: {
-    width: 25,
-    height: 25,
+    width: 26,
+    height: 26,
+    borderRadius: 50,
   },
   deleteIcon: {
-    backgroundColor: "#FFF",
     color: "#E8E8E8",
-    borderRadius: 55,
   },
   title: {
     color: "#212121",

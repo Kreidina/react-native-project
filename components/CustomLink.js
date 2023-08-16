@@ -2,7 +2,11 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 const CustomLink = ({ text, onPress }) => {
   return (
-    <TouchableOpacity style={stylesL.link} onPress={onPress}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={stylesL.link}
+      onPress={onPress}
+    >
       <Text style={stylesL.linkText}>{text}</Text>
     </TouchableOpacity>
   );

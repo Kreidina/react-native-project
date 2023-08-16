@@ -14,12 +14,16 @@ import {
 import LoginForm from "../../components/LoginForm";
 import CustomLink from "../../components/CustomLink";
 
-export const LoginScreen = ({ navigation }) => {
+export const LoginScreen = ({ navigation, route }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+  const handleAuth = route.params.handleAuth;
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
     Keyboard.dismiss();
+  };
+  const navigatePage = (pageName) => {
+    navigation.navigate(pageName);
   };
   const bgrImg = require("../../assets/img/background.jpg");
 
@@ -36,13 +40,15 @@ export const LoginScreen = ({ navigation }) => {
                 <LoginForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
+                  navigatePage={navigatePage}
+                  handleAuth={handleAuth}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>
-                    <Text style={styles.linkText}>Немає акаунту?</Text>
+                    <Text style={styles.linkText}>Немає акаунту? </Text>
                     <CustomLink
-                      text=" Зареєструватися"
-                      onPress={() => navigation.navigate("Registration")}
+                      text="Зареєструватися"
+                      onPress={() => navigatePage("Registration")}
                     />
                   </View>
                 )}
