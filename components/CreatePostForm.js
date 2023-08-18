@@ -10,17 +10,31 @@ import {
 } from "react-native";
 
 const initialState = {
-  name: "",
-  location: "",
+  name: null,
+  location: null,
 };
 
-const CreatePostForm = ({ setIsShowKeydoard }) => {
-  const [postContent, setpostContent] = useState(initialState);
+const CreatePostForm = ({
+  setIsShowKeydoard,
+  publishSubmit,
+  photo,
+  setPhoto,
+}) => {
+  const [postContent, setPostContent] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
 
   const handelFocus = (inputName) => {
     setIsShowKeydoard(true);
     setFocusedInput(inputName);
+  };
+
+  const handelSubmit = () => {
+    if (!postContent?.name || !postContent?.location || !photo) return;
+    console.log(postContent);
+    publishSubmit(postContent);
+    setPhoto(null);
+    setIsShowKeydoard(false);
+    setPostContent(initialState);
   };
 
   return (
@@ -35,7 +49,7 @@ const CreatePostForm = ({ setIsShowKeydoard }) => {
               focusedInput === "input1" && styles.inputFocus,
             ]}
             onChangeText={(value) =>
-              setpostContent((prevState) => ({ ...prevState, name: value }))
+              setPostContent((prevState) => ({ ...prevState, name: value }))
             }
             value={postContent.name}
             placeholder="Назва..."
@@ -51,7 +65,7 @@ const CreatePostForm = ({ setIsShowKeydoard }) => {
                 focusedInput === "input2" && styles.inputFocus,
               ]}
               onChangeText={(value) =>
-                setpostContent((prevState) => ({
+                setPostContent((prevState) => ({
                   ...prevState,
                   location: value,
                 }))
@@ -73,8 +87,24 @@ const CreatePostForm = ({ setIsShowKeydoard }) => {
           </View>
         </View>
       </KeyboardAvoidingView>
-      <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-        <Text style={styles.btnText}>Опубліковати</Text>
+      <TouchableOpacity
+        onPress={handelSubmit}
+        activeOpacity={0.8}
+        style={[
+          !postContent.name || !postContent.location || !photo
+            ? styles.btn
+            : { ...styles.btn, ...styles.btnActive },
+        ]}
+      >
+        <Text
+          style={[
+            !postContent.name || !postContent.location || !photo
+              ? styles.btnText
+              : { ...styles.btnText, ...styles.btnTextActive },
+          ]}
+        >
+          Опубліковати
+        </Text>
       </TouchableOpacity>
     </>
   );
@@ -114,6 +144,12 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     fontWeight: "400",
+  },
+  btnActive: {
+    backgroundColor: "#FF6C00",
+  },
+  btnTextActive: {
+    color: "#fff",
   },
 });
 

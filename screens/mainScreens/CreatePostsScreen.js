@@ -1,5 +1,11 @@
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import {
+  AntDesign,
+  MaterialIcons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import {
   StyleSheet,
   Text,
@@ -8,10 +14,63 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import CreatePostForm from "../../components/CreatePostForm";
+import { Camera, CameraType } from "expo-camera";
 
-export const CreatePostsScreen = () => {
+import CreatePostForm from "../../components/CreatePostForm";
+import { Image } from "react-native";
+
+export const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(CameraType.back);
+  const [photo, setPhoto] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
+      const locationStatus = await Location.requestForegroundPermissionsAsync();
+
+      setHasPermission(
+        cameraStatus.status === "granted" &&
+          mediaLibraryStatus.status === "granted" &&
+          locationStatus.status === "granted"
+      );
+    })();
+  }, []);
+
+  const toggleCameraType = () => {
+    setType((current) => {
+      switch (current) {
+        case CameraType.back:
+          return CameraType.front;
+        case CameraType.front:
+          return CameraType.back;
+        default:
+          return current;
+      }
+    });
+  };
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+  const takePhoto = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync();
+      const location = await Location.getCurrentPositionAsync();
+      // await MediaLibrary.createAssetAsync(uri);
+      setPhoto(uri);
+    }
+  };
+
+  const publishSubmit = (content) => {
+    navigation.navigate("DefaultScreen", { photo, content });
+  };
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
@@ -34,19 +93,47 @@ export const CreatePostsScreen = () => {
         </View>
         <View style={styles.main}>
           {!isShowKeyboard && (
-            <>
-              <View style={styles.cameraBox}>
-                <MaterialIcons
-                  name="photo-camera"
-                  size={24}
-                  color="black"
-                  style={styles.iconCamera}
-                />
-              </View>
-              <Text style={styles.cameraTitle}>Завантажте фото</Text>
-            </>
+            <View>
+              <Camera style={styles.cameraBox} type={type} ref={setCameraRef}>
+                {photo && (
+                  <View style={styles.photoBox}>
+                    <Image source={{ uri: photo }} style={styles.photo} />
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.changeCamera}
+                  onPress={toggleCameraType}
+                >
+                  <MaterialCommunityIcons
+                    name="camera-retake"
+                    size={20}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.linkCamera} onPress={takePhoto}>
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={24}
+                    style={[styles.iconCamera, photo && styles.iconPhotoCamera]}
+                  />
+                </TouchableOpacity>
+              </Camera>
+              <TouchableOpacity>
+                {photo ? (
+                  <Text style={styles.cameraTitle}>Редагувати фото </Text>
+                ) : (
+                  <Text style={styles.cameraTitle}>Завантажте фото</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           )}
-          <CreatePostForm setIsShowKeydoard={setIsShowKeydoard} />
+          <CreatePostForm
+            setIsShowKeydoard={setIsShowKeydoard}
+            publishSubmit={publishSubmit}
+            photo={photo}
+            setPhoto={setPhoto}
+          />
         </View>
       </View>
       {/* <AntDesign
@@ -69,7 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 11,
+    paddingTop: 25,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E5E5",
   },
@@ -92,8 +179,9 @@ const styles = StyleSheet.create({
     color: "#212121",
   },
   cameraBox: {
-    width: "100%",
-    height: 240,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 360,
     backgroundColor: "#F6F6F6",
     borderWidth: 1,
     borderColor: "#E8E8E8",
@@ -101,14 +189,36 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   iconCamera: {
-    position: "absolute",
-    top: "37%",
-    right: "40%",
     color: "#BDBDBD",
     backgroundColor: "#fff",
     paddingHorizontal: 18,
     paddingVertical: 18,
     borderRadius: 50,
+  },
+  iconPhotoCamera: {
+    color: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+  },
+  changeCamera: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    width: 30,
+    height: 30,
+    borderColor: "#fff",
+    borderWidth: 1,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  photoBox: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  photo: {
+    width: 200,
+    height: 150,
   },
   cameraTitle: {
     color: "#BDBDBD",

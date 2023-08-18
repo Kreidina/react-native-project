@@ -2,7 +2,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { useState } from "react";
 
 import { RegistrationScreen, LoginScreen, Home } from "./screens/auth";
 import {
@@ -17,7 +18,31 @@ const MainTab = createBottomTabNavigator();
 export const Navigator = ({ isAuth, handleAuth }) => {
   return (
     <NavigationContainer>
-      {isAuth ? (
+      {!isAuth ? (
+        <AuthStack.Navigator initialRouteName="Login">
+          <AuthStack.Screen
+            options={{
+              headerShown: false,
+            }}
+            name="Login"
+            component={LoginScreen}
+            initialParams={{ handleAuth }}
+          />
+          <AuthStack.Screen
+            options={{
+              headerShown: false,
+            }}
+            name="Registration"
+            component={RegistrationScreen}
+            initialParams={{ handleAuth }}
+          />
+          <AuthStack.Screen
+            options={{ headerShown: false }}
+            name="Home"
+            component={Home}
+          />
+        </AuthStack.Navigator>
+      ) : (
         <MainTab.Navigator
           initialRouteName="Posts"
           screenOptions={{ headerShown: false, tabBarShowLabel: false }}
@@ -55,30 +80,6 @@ export const Navigator = ({ isAuth, handleAuth }) => {
             }}
           />
         </MainTab.Navigator>
-      ) : (
-        <AuthStack.Navigator initialRouteName="Login">
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="Login"
-            component={LoginScreen}
-            initialParams={{ handleAuth }}
-          />
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="Registration"
-            component={RegistrationScreen}
-            initialParams={{ handleAuth }}
-          />
-          <AuthStack.Screen
-            options={{ headerShown: false }}
-            name="Home"
-            component={Home}
-          />
-        </AuthStack.Navigator>
       )}
     </NavigationContainer>
   );
