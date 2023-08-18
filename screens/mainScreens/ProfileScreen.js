@@ -1,28 +1,33 @@
 import { EvilIcons } from "@expo/vector-icons";
 import { ImageBackground, StyleSheet, View, Image } from "react-native";
+import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 
 export const ProfileScreen = () => {
   const bgrImg = require("../../assets/img/background.jpg");
   const avaImg = require("../../assets/img/avatar.jpg");
 
   return (
-    <View style={styles.container}>
-      <View style={styles.bgrContainer}>
-        <ImageBackground source={bgrImg} style={styles.bgrImage}>
-          <View style={styles.contentContainer}>
-            <View style={styles.avatarBox}>
-              <Image source={avaImg} style={styles.avaImg} />
-            </View>
-            <EvilIcons
-              name="comment"
-              size={24}
-              color="black"
-              style={styles.iconComment}
-            />
+    <BottomTabBarHeightContext.Consumer>
+      {(tabBarHeight) => (
+        <View style={styles.container}>
+          <View style={styles.bgrContainer}>
+            <ImageBackground source={bgrImg} style={styles.bgrImage}>
+              <View style={styles.contentContainer}>
+                <View style={styles.avatarBox}>
+                  <Image source={avaImg} style={styles.avaImg} />
+                </View>
+                <EvilIcons
+                  name="comment"
+                  size={24}
+                  color="black"
+                  style={styles.iconComment}
+                />
+              </View>
+            </ImageBackground>
           </View>
-        </ImageBackground>
-      </View>
-    </View>
+        </View>
+      )}
+    </BottomTabBarHeightContext.Consumer>
   );
 };
 const styles = StyleSheet.create({

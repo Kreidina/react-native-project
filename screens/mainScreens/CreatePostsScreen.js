@@ -13,18 +13,23 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 
 import CreatePostForm from "../../components/CreatePostForm";
-import { Image } from "react-native";
 
+const initialState = {
+  name: null,
+  location: null,
+};
 export const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(CameraType.back);
   const [photo, setPhoto] = useState(null);
+  const [postContent, setPostContent] = useState(initialState);
 
   useEffect(() => {
     (async () => {
@@ -68,8 +73,8 @@ export const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  const publishSubmit = (content) => {
-    navigation.navigate("DefaultScreen", { photo, content });
+  const publishSubmit = () => {
+    navigation.navigate("DefaultScreen", { photo, postContent });
   };
 
   const keyboardHide = () => {
@@ -77,18 +82,23 @@ export const CreatePostsScreen = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
+  const backToPosts = () => {
+    setPhoto(null);
+    setPostContent(initialState);
+    navigation.navigate("DefaultScreen");
+  };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <View style={[styles.header, isShowKeyboard && styles.headerKeyoard]}>
           <Text style={styles.title}>Створити публікацію</Text>
-          <TouchableOpacity activeOpacity={0.8} style={styles.linkBack}>
-            <AntDesign
-              name="arrowleft"
-              size={24}
-              color="black"
-              style={styles.iconBack}
-            />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.linkBack}
+            onPress={backToPosts}
+          >
+            <AntDesign name="arrowleft" size={24} style={styles.iconBack} />
           </TouchableOpacity>
         </View>
         <View style={styles.main}>
@@ -130,21 +140,26 @@ export const CreatePostsScreen = ({ navigation }) => {
           )}
           <CreatePostForm
             setIsShowKeydoard={setIsShowKeydoard}
-            publishSubmit={publishSubmit}
             photo={photo}
             setPhoto={setPhoto}
+            postContent={postContent}
+            setPostContent={setPostContent}
+            publishSubmit={publishSubmit}
           />
         </View>
+        {!isShowKeyboard && (
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.linkDelete} onPress={backToPosts}>
+              <AntDesign name="delete" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      {/* <AntDesign
-        name="delete"
-        size={24}
-        color="black"
-        style={styles.iconDelete}
-      /> */}
     </TouchableWithoutFeedback>
   );
 };
+
+//
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -181,7 +196,7 @@ const styles = StyleSheet.create({
   cameraBox: {
     justifyContent: "center",
     alignItems: "center",
-    height: 360,
+    height: 240,
     backgroundColor: "#F6F6F6",
     borderWidth: 1,
     borderColor: "#E8E8E8",
@@ -226,5 +241,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     marginTop: 8,
+  },
+  footer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "auto",
+  },
+  linkDelete: {
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F6F6F6",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 9,
+    marginBottom: 22,
   },
 });

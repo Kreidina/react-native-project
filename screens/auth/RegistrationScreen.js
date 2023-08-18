@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-
 import {
   ImageBackground,
   StyleSheet,
@@ -17,9 +16,8 @@ import { AntDesign } from "@expo/vector-icons";
 import RegisterForm from "../../components/RegisterForm";
 import CustomLink from "../../components/CustomLink";
 
-export const RegistrationScreen = ({ navigation, route }) => {
+export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
-  const handleAuth = route.params.handleAuth;
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
@@ -81,7 +79,6 @@ export const RegistrationScreen = ({ navigation, route }) => {
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
                   navigatePage={navigatePage}
-                  handleAuth={handleAuth}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>

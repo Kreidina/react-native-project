@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import {
   StyleSheet,
   Text,
@@ -48,8 +49,8 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
               renderItem={({ item }) => (
                 <Item
                   photo={item.photo}
-                  name={item.content.name}
-                  location={item.content.location}
+                  name={item.postContent.name}
+                  location={item.postContent.location}
                   navigateToScreen={navigateToScreen}
                 />
               )}

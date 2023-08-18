@@ -14,7 +14,7 @@ import { Image } from "react-native";
 import { CommentsItem } from "../../components/CommentsItem";
 import { FlatList } from "react-native";
 
-export const CommentsScreen = ({ route }) => {
+export const CommentsScreen = ({ navigation, route }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [comments, setComments] = useState([]);
@@ -33,7 +33,11 @@ export const CommentsScreen = ({ route }) => {
   const postComment = (value) => {
     setComments((prevState) => [...prevState, value]);
   };
-  console.log(comments);
+
+  const backToPosts = () => {
+    navigation.navigate("DefaultScreen");
+  };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -44,7 +48,11 @@ export const CommentsScreen = ({ route }) => {
           }
         >
           <Text style={styles.title}>Коментарі</Text>
-          <TouchableOpacity activeOpacity={0.8} style={styles.linkBack}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.linkBack}
+            onPress={backToPosts}
+          >
             <AntDesign
               name="arrowleft"
               size={24}

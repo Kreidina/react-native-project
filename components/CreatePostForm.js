@@ -19,8 +19,9 @@ const CreatePostForm = ({
   publishSubmit,
   photo,
   setPhoto,
+  postContent,
+  setPostContent,
 }) => {
-  const [postContent, setPostContent] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
 
   const handelFocus = (inputName) => {
@@ -31,7 +32,7 @@ const CreatePostForm = ({
   const handelSubmit = () => {
     if (!postContent?.name || !postContent?.location || !photo) return;
     console.log(postContent);
-    publishSubmit(postContent);
+    publishSubmit();
     setPhoto(null);
     setIsShowKeydoard(false);
     setPostContent(initialState);

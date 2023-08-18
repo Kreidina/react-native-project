@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-
 import {
   ImageBackground,
   StyleSheet,
@@ -14,9 +13,8 @@ import {
 import LoginForm from "../../components/LoginForm";
 import CustomLink from "../../components/CustomLink";
 
-export const LoginScreen = ({ navigation, route }) => {
+export const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
-  const handleAuth = route.params.handleAuth;
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
@@ -41,7 +39,6 @@ export const LoginScreen = ({ navigation, route }) => {
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
                   navigatePage={navigatePage}
-                  handleAuth={handleAuth}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>

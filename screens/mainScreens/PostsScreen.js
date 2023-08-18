@@ -15,6 +15,7 @@ export const PostsScreen = () => {
       />
       <NestedStack.Screen
         options={{
+          tabBarStyle: { display: "none" },
           headerShown: false,
         }}
         name="Comments"

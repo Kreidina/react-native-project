@@ -4,9 +4,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import CustomButton from "./CustomButton";
 import { useState } from "react";
+
 import CustomLink from "./CustomLink";
+import CustomButton from "./CustomButton";
 
 const initialState = {
   name: "",
@@ -14,12 +15,7 @@ const initialState = {
   password: "",
 };
 
-const RegisterForm = ({
-  isShowKeyboard,
-  setIsShowKeydoard,
-  navigatePage,
-  handleAuth,
-}) => {
+const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -35,9 +31,7 @@ const RegisterForm = ({
 
   const handelSubmit = () => {
     if (!state.email || !state.password || !state.name) return;
-    console.log(state);
     navigatePage("Home");
-    handleAuth();
     setState(initialState);
   };
 

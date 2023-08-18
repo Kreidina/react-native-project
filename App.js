@@ -1,11 +1,13 @@
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import { useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
-import { Navigator } from "./router";
+import { RegistrationScreen, LoginScreen, Home } from "./screens/auth";
+
+const AuthStack = createStackNavigator();
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(true);
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
@@ -16,8 +18,29 @@ export default function App() {
     return null;
   }
 
-  const handleAuth = () => {
-    setIsAuth(true);
-  };
-  return <Navigator isAuth={isAuth} handleAuth={handleAuth} />;
+  return (
+    <NavigationContainer>
+      <AuthStack.Navigator initialRouteName="Login">
+        <AuthStack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="Login"
+          component={LoginScreen}
+        />
+        <AuthStack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="Registration"
+          component={RegistrationScreen}
+        />
+        <AuthStack.Screen
+          options={{ headerShown: false }}
+          name="Home"
+          component={Home}
+        />
+      </AuthStack.Navigator>
+    </NavigationContainer>
+  );
 }

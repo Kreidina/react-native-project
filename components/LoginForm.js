@@ -1,19 +1,15 @@
 import { StyleSheet, TextInput, View } from "react-native";
-import CustomButton from "./CustomButton";
 import { useState } from "react";
+
 import CustomLink from "./CustomLink";
+import CustomButton from "./CustomButton";
 
 const initialState = {
   email: "",
   password: "",
 };
 
-const LoginForm = ({
-  isShowKeyboard,
-  setIsShowKeydoard,
-  navigatePage,
-  handleAuth,
-}) => {
+const LoginForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -29,9 +25,7 @@ const LoginForm = ({
 
   const handelSubmit = () => {
     if (!state.email || !state.password) return;
-    console.log(state);
     navigatePage("Home");
-    handleAuth();
     setState(initialState);
   };
 
