@@ -1,7 +1,13 @@
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 
-export const Item = ({ photo, location, name, navigateToScreen }) => {
+export const Item = ({
+  photo,
+  location,
+  locationName,
+  name,
+  navigateToScreen,
+}) => {
   return (
     <View style={styles.container}>
       <Image source={{ uri: photo }} style={styles.img} />
@@ -17,14 +23,14 @@ export const Item = ({ photo, location, name, navigateToScreen }) => {
         <TouchableOpacity
           style={styles.linkLocation}
           onPress={() => navigateToScreen("Map", { location })}
-        > 
+        >
           <SimpleLineIcons
             name="location-pin"
             size={24}
             color="black"
             style={styles.iconLocation}
           />
-          <Text style={styles.location}>{location}</Text>
+          <Text style={styles.location}>{locationName}</Text>
         </TouchableOpacity>
       </View>
     </View>

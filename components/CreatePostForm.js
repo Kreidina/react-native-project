@@ -31,7 +31,6 @@ const CreatePostForm = ({
 
   const handelSubmit = () => {
     if (!postContent?.name || !postContent?.location || !photo) return;
-    console.log(postContent);
     publishSubmit();
     setPhoto(null);
     setIsShowKeydoard(false);

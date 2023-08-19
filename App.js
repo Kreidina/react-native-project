@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { RegistrationScreen, LoginScreen, Home } from "./screens/auth";
+import { StatusBar } from "expo-status-bar";
 
 const AuthStack = createStackNavigator();
 
@@ -19,28 +20,31 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <AuthStack.Navigator initialRouteName="Login">
-        <AuthStack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="Login"
-          component={LoginScreen}
-        />
-        <AuthStack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="Registration"
-          component={RegistrationScreen}
-        />
-        <AuthStack.Screen
-          options={{ headerShown: false }}
-          name="Home"
-          component={Home}
-        />
-      </AuthStack.Navigator>
-    </NavigationContainer>
+    <>
+      <StatusBar />
+      <NavigationContainer>
+        <AuthStack.Navigator initialRouteName="Login">
+          <AuthStack.Screen
+            options={{
+              headerShown: false,
+            }}
+            name="Login"
+            component={LoginScreen}
+          />
+          <AuthStack.Screen
+            options={{
+              headerShown: false,
+            }}
+            name="Registration"
+            component={RegistrationScreen}
+          />
+          <AuthStack.Screen
+            options={{ headerShown: false }}
+            name="Home"
+            component={Home}
+          />
+        </AuthStack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }

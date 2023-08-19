@@ -10,44 +10,32 @@ export const Home = () => {
   return (
     <MainTab.Navigator
       initialRouteName="Posts"
-      screenOptions={{ headerShown: false, tabBarShowLabel: false }}
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarIcon: ({ focuced, size, color }) => {
+          let icon;
+          color = focuced ? "#FF6C00" : "rgba(33, 33, 33, 0.8)";
+          if (route.name === "Create") {
+            icon = <AntDesign name="plus" size={16} style={styles.iconPlus} />;
+          } else if (route.name === "Profile") {
+            icon = <Feather name="user" size={size} color={color} />;
+          } else if (route.name === "Posts") {
+            icon = <AntDesign name="appstore-o" size={size} color={color} />;
+          }
+          return icon;
+        },
+      })}
     >
-      <MainTab.Screen
-        name="Posts"
-        component={PostsScreen}
-        tabBarHideOnKeyboard={true}
-        options={{
-          tabBarActiveTintColor: "#FF6C00",
-          tabBarInactiveTintColor: "rgba(33, 33, 33, 0.8)",
-          tabBarIcon: ({ focused, size, color }) => (
-            <AntDesign name="appstore-o" size={size} color={color} />
-          ),
-        }}
-      />
+      <MainTab.Screen name="Posts" component={PostsScreen} />
       <MainTab.Screen
         name="Create"
         component={CreatePostsScreen}
-        tabBarHideOnKeyboard={true}
         options={{
           tabBarStyle: { display: "none" },
-          tabBarInactiveTintColor: "rgba(33, 33, 33, 0.8)",
-          tabBarIcon: ({ focused, size, color }) => (
-            <AntDesign name="plus" size={16} style={styles.iconPlus} />
-          ),
         }}
       />
-      <MainTab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        tabBarHideOnKeyboard={true}
-        options={{
-          tabBarActiveTintColor: "#FF6C00",
-          tabBarInactiveTintColor: "rgba(33, 33, 33, 0.8)",
-          tabBarIcon: ({ focused, size, color }) => (
-            <Feather name="user" size={size} color={color} />
-          ),
-        }}
-      />
+      <MainTab.Screen name="Profile" component={ProfileScreen} />
     </MainTab.Navigator>
   );
 };

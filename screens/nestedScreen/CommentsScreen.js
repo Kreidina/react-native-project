@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   linkBack: {
     position: "absolute",
-    bottom: 10,
+    bottom: 8,
     left: 0,
   },
   iconBack: {
@@ -119,17 +119,9 @@ const styles = StyleSheet.create({
     height: 240,
     borderRadius: 8,
     marginTop: 32,
+    marginBottom: 20,
   },
   footer: {
     marginTop: "auto",
-    // paddingBottom: 22,
-    // paddingTop: 9,
-    // height: 70,
-  },
-  btn: {
-    // backgroundColor: "#FF6C00",
-    // width: 70,
-    // marginHorizontal: 39,
-    // borderRadius: 19,
   },
 });
