@@ -23,8 +23,7 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
   };
-
-  const avaImg = require("../../assets/img/avatar.jpg");
+  const avaImg = require("../../../assets/img/avatar.jpg");
   return (
     <View style={styles.container}>
       <View style={styles.header}>

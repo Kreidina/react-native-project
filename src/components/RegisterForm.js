@@ -5,9 +5,11 @@ import {
   View,
 } from "react-native";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import CustomLink from "./CustomLink";
 import CustomButton from "./CustomButton";
+import { registerDB } from "../redux/auth/operations";
 
 const initialState = {
   name: "",
@@ -19,6 +21,7 @@ const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const dispatch = useDispatch();
 
   const handelFocus = (inputName) => {
     setIsShowKeydoard(true);
@@ -32,6 +35,7 @@ const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const handelSubmit = () => {
     if (!state.email || !state.password || !state.name) return;
     navigatePage("Home");
+    dispatch(registerDB(state));
     setState(initialState);
   };
 

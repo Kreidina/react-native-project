@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import CustomLink from "./CustomLink";
 import CustomButton from "./CustomButton";
+import { useDispatch } from "react-redux";
+import { loginDB } from "../redux/auth/operations";
 
 const initialState = {
   email: "",
@@ -13,6 +15,8 @@ const LoginForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const dispatch = useDispatch();
 
   const handelFocus = (inputName) => {
     setIsShowKeydoard(true);
@@ -25,6 +29,7 @@ const LoginForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
 
   const handelSubmit = () => {
     if (!state.email || !state.password) return;
+    dispatch(loginDB(state));
     navigatePage("Home");
     setState(initialState);
   };

@@ -23,7 +23,8 @@ export const LoginScreen = ({ navigation }) => {
   const navigatePage = (pageName) => {
     navigation.navigate(pageName);
   };
-  const bgrImg = require("../../assets/img/background.jpg");
+  const bgrImg = require("../../../assets/img/background.jpg");
+
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>

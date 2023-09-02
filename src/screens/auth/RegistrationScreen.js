@@ -28,8 +28,8 @@ export const RegistrationScreen = ({ navigation }) => {
     navigation.navigate(pageName);
   };
 
-  const bgrImg = require("../../assets/img/background.jpg");
-  const avaImg = require("../../assets/img/avatar.jpg");
+  const bgrImg = require("../../../assets/img/background.jpg");
+  const avaImg = require("../../../assets/img/avatar.jpg");
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>

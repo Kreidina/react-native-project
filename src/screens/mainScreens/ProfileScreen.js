@@ -3,8 +3,8 @@ import { ImageBackground, StyleSheet, View, Image } from "react-native";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 
 export const ProfileScreen = () => {
-  const bgrImg = require("../../assets/img/background.jpg");
-  const avaImg = require("../../assets/img/avatar.jpg");
+  const bgrImg = require("../../../assets/img/background.jpg");
+  const avaImg = require("../../../assets/img/avatar.jpg");
 
   return (
     <BottomTabBarHeightContext.Consumer>
