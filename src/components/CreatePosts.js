@@ -8,6 +8,7 @@ import { Camera } from "expo-camera";
 
 import CreatePostForm from "./CreatePostForm";
 import Header from "./Header";
+
 export const CreatePosts = ({
   isShowKeyboard,
   setIsShowKeydoard,

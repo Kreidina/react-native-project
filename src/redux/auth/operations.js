@@ -3,23 +3,47 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
+  signOut,
 } from "firebase/auth";
 import { auth } from "../../firebase/config";
+import { authSlice } from "./authSlice";
+
+const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
 export const registerDB =
   ({ email, password, name }) =>
   async (dispatch, getState) => {
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      await createUserWithEmailAndPassword(auth, email, password);
+      const currentUser = await auth.currentUser;
+      if (currentUser) {
+        await updateProfile(currentUser, { displayName: name });
+      }
+
+      const { uid, displayName } = await auth.currentUser;
+
+      dispatch(
+        updateUserProfile({
+          userId: uid,
+          name: displayName,
+        })
+      );
     } catch (error) {
       throw error;
     }
   };
 
-export const authStateChanged = async (onChange = () => {}) => {
-  onAuthStateChanged((user) => {
-    onChange(user);
+export const authStateChanged = () => async (dispatch, getState) => {
+  await onAuthStateChanged(auth, (user) => {
+    if (user) {
+      dispatch(
+        updateUserProfile({
+          userId: user.uid,
+          name: user.displayName,
+        })
+      );
+      dispatch(authStateChange({ stateChange: true }));
+    }
   });
 };
 
@@ -27,16 +51,17 @@ export const loginDB =
   ({ email, password }) =>
   async (dispatch, getState) => {
     try {
-      const credentials = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(credentials.user);
-      return credentials.user;
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       throw error;
     }
   };
-// export const singUp = () => (dispatch, getState) => {};
-// export const singOut = () => (dispatch, getState) => {};
+
+export const logout = () => async (dispatch, getState) => {
+  try {
+    await signOut(auth);
+    dispatch(authSignOut());
+  } catch (e) {
+    throw e;
+  }
+};

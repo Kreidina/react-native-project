@@ -25,7 +25,6 @@ export const LoginScreen = ({ navigation }) => {
   };
   const bgrImg = require("../../../assets/img/background.jpg");
 
-
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -39,7 +38,6 @@ export const LoginScreen = ({ navigation }) => {
                 <LoginForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
-                  navigatePage={navigatePage}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>

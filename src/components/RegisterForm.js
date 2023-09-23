@@ -17,7 +17,7 @@ const initialState = {
   password: "",
 };
 
-const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
+const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -34,7 +34,6 @@ const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
 
   const handelSubmit = () => {
     if (!state.email || !state.password || !state.name) return;
-    navigatePage("Home");
     dispatch(registerDB(state));
     setState(initialState);
   };

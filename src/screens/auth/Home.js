@@ -3,10 +3,14 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 
 import { PostsScreen, ProfileScreen, CreatePostsScreen } from "../mainScreens";
+import { useSelector } from "react-redux";
 
 const MainTab = createBottomTabNavigator();
-
 export const Home = () => {
+  const { stateChange } = useSelector((state) => state.auth);
+  if (!stateChange) {
+    return;
+  }
   return (
     <MainTab.Navigator
       initialRouteName="Posts"

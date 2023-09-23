@@ -13,6 +13,7 @@ import { CommentsForm } from "../../components/CommentForm";
 import { Image } from "react-native";
 import { CommentsItem } from "../../components/CommentsItem";
 import { FlatList } from "react-native";
+import Header from "../../components/Header";
 
 export const CommentsScreen = ({ navigation, route }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
@@ -41,26 +42,12 @@ export const CommentsScreen = ({ navigation, route }) => {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        <View
-          style={
-            styles.header
-            // isShowKeyboard && styles.headerKeyoard]
-          }
-        >
-          <Text style={styles.title}>Коментарі</Text>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.linkBack}
-            onPress={backToPosts}
-          >
-            <AntDesign
-              name="arrowleft"
-              size={24}
-              color="black"
-              style={styles.iconBack}
-            />
-          </TouchableOpacity>
-        </View>
+        <Header
+          title="Коментарі"
+          isShowKeyboard={isShowKeyboard}
+          backToPosts={backToPosts}
+        />
+
         <View style={styles.main}>
           <Image source={{ uri: photo }} style={styles.img} />
           {comments && (

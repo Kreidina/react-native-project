@@ -13,14 +13,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authReducer } from "./auth/authSlice";
 import thunk from "redux-thunk";
 
-const persistConfig = {
-  key: "auth",
-  storage: AsyncStorage,
-};
+// const persistConfig = {
+//   key: "auth",
+//   storage: AsyncStorage,
+// };
 
 export const store = configureStore({
   reducer: {
-    auth: persistReducer(persistConfig, authReducer),
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware({

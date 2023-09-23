@@ -8,8 +8,10 @@ import {
   Keyboard,
 } from "react-native";
 import { CameraType } from "expo-camera";
-
+import uuid from "react-native-uuid";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { CreatePosts } from "../../components/CreatePosts";
+import { storage } from "../../firebase/config";
 
 const initialState = {
   name: null,
@@ -57,7 +59,9 @@ export const CreatePostsScreen = ({ navigation }) => {
       }
     });
   };
-
+  // useEffect(() => {
+  //   takePhoto();
+  // }, []);
   const takePhoto = async () => {
     if (cameraRef) {
       const { uri } = await cameraRef.takePictureAsync();
@@ -69,7 +73,12 @@ export const CreatePostsScreen = ({ navigation }) => {
   };
 
   const publishSubmit = () => {
-    navigation.navigate("DefaultScreen", { photo, postContent, location });
+    uploadPhotoToServer();
+    navigation.navigate("DefaultScreen", {
+      photo,
+      postContent,
+      location,
+    });
   };
 
   const keyboardHide = () => {
@@ -82,6 +91,33 @@ export const CreatePostsScreen = ({ navigation }) => {
     setPostContent(initialState);
     setLocation(null);
     navigation.navigate("DefaultScreen");
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      if (photo) {
+        const photoBlob = new Blob([photo], { type: "image/jpeg" });
+        const uniqueId = uuid.v4();
+        const storageRef = ref(storage, `postImage/${uniqueId}`);
+        const mainStorageRef = ref(storage, "postImage");
+
+        await uploadBytes(storageRef, photoBlob)
+          .then((snapshot) => {
+            // console.log(snapshot.metadata.fullPath);
+            console.log("Фотографія успішно завантажена до Firebase Storage");
+          })
+          .catch((error) => {
+            console.error("Помилка під час завантаження фотографії:", error);
+          });
+      }
+    } catch (error) {
+      console.error("Помилка завантаження фотографії:", error);
+    }
+    // const processedPhoto = await storage
+    //   .ref("postImage")
+    //   .child(uniqueId)
+    //   .getDownloadURL();
+    // console.log(processedPhoto);
   };
 
   return (

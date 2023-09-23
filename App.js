@@ -1,14 +1,9 @@
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-// import { StatusBar } from "expo-status-bar";
 import { Provider } from "react-redux";
 
-import { RegistrationScreen, LoginScreen, Home } from "./src/screens/auth";
 import { store } from "./src/redux/store";
-
-const AuthStack = createStackNavigator();
+import Main from "./src/components/Main";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -20,31 +15,10 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <AuthStack.Navigator initialRouteName="Login">
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="Login"
-            component={LoginScreen}
-          />
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="Registration"
-            component={RegistrationScreen}
-          />
-          <AuthStack.Screen
-            options={{ headerShown: false }}
-            name="Home"
-            component={Home}
-          />
-        </AuthStack.Navigator>
-      </NavigationContainer>
+      <Main />
     </Provider>
   );
 }

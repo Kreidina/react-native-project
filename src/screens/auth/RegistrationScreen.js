@@ -29,7 +29,7 @@ export const RegistrationScreen = ({ navigation }) => {
   };
 
   const bgrImg = require("../../../assets/img/background.jpg");
-  const avaImg = require("../../../assets/img/avatar.jpg");
+  // const avaImg = require("../../../assets/img/avatar.jpg");
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -41,7 +41,20 @@ export const RegistrationScreen = ({ navigation }) => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
                 <View>
-                  {!isShowKeyboard ? (
+                  <View style={styles.avatarBox}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      onPress={() => console.log("add")}
+                    >
+                      <AntDesign
+                        name="pluscircleo"
+                        size={25}
+                        style={styles.avatarIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  {/* {!isShowKeyboard ? (
                     <View style={styles.avatarBox}>
                       <TouchableOpacity
                         activeOpacity={0.8}
@@ -70,7 +83,7 @@ export const RegistrationScreen = ({ navigation }) => {
                         />
                       </TouchableOpacity>
                     </View>
-                  )}
+                  )} */}
                 </View>
 
                 <Text style={styles.title}>Реєстрація</Text>
@@ -78,7 +91,6 @@ export const RegistrationScreen = ({ navigation }) => {
                 <RegisterForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
-                  navigatePage={navigatePage}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>

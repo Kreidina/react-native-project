@@ -1,5 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { ref, listAll, getDownloadURL } from "firebase/storage";
+import { useDispatch } from "react-redux";
 
 import {
   StyleSheet,
@@ -10,9 +12,14 @@ import {
   FlatList,
 } from "react-native";
 import { Item } from "../../components/Item";
+import { logout } from "../../redux/auth/operations";
+import { storage } from "../../firebase/config";
 
 export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
+  const [photo, setPhoto] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (route.params) {
@@ -23,18 +30,56 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
   };
+
+  const handelLogout = () => {
+    dispatch(logout());
+  };
+
+  useEffect(() => {
+    getAll();
+  }, []);
+
+  const getAll = async () => {
+    try {
+      const mainStorageRef = ref(storage, "postImage");
+
+      await listAll(mainStorageRef).then((res) => {
+        res.items.forEach((item) => {
+          // const url = getDownloadURL(item);
+          // console.log(item);
+          const oneItem = item._location.path;
+          const file = [];
+          file.push(oneItem);
+          setPhoto(file);
+          // console.log("response", res.items);
+          // console.log("response", res.prefixes);
+        });
+      });
+      // console.log(files);
+    } catch (e) {
+      console.log("Помилка завантаження", e);
+    }
+  };
+  // console.log(posts);
+
   const avaImg = require("../../../assets/img/avatar.jpg");
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Публікації</Text>
-        <TouchableOpacity activeOpacity={0.8} style={styles.linkLogout}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.linkLogout}
+          onPress={handelLogout}
+        >
           <MaterialIcons name="logout" size={24} style={styles.iconLogout} />
         </TouchableOpacity>
       </View>
       <View style={styles.main}>
         <View style={styles.avatar}>
           <Image source={avaImg} size={60} style={styles.avaImg} />
+          <Image source={{ uri: photo[0] }} size={60} style={styles.avaImg} />
+
           <View style={styles.avaContent}>
             <Text style={styles.avaTitle}>Natali Romanova</Text>
             <Text style={styles.avaText}>email@example.com</Text>
@@ -72,7 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 25,
+    // paddingTop: 25,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E5E5",
   },

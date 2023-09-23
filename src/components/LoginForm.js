@@ -11,7 +11,7 @@ const initialState = {
   password: "",
 };
 
-const LoginForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
+const LoginForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -30,7 +30,6 @@ const LoginForm = ({ isShowKeyboard, setIsShowKeydoard, navigatePage }) => {
   const handelSubmit = () => {
     if (!state.email || !state.password) return;
     dispatch(loginDB(state));
-    navigatePage("Home");
     setState(initialState);
   };
 

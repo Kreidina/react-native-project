@@ -1,10 +1,6 @@
 import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// Функція для підключення авторизації в проект
 import { getAuth } from "firebase/auth";
-// Функція для підключення бази даних у проект
 import { getFirestore } from "firebase/firestore";
-// Функція для підключення сховища файлів в проект
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -20,6 +16,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const firestore = getFirestore(app);
 export const storage = getStorage(app);
-// export const analytics = getAnalytics(app);
