@@ -1,6 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { useDispatch } from "react-redux";
 
 import {
@@ -11,21 +10,38 @@ import {
   Image,
   FlatList,
 } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+
 import { Item } from "../../components/Item";
 import { logout } from "../../redux/auth/operations";
-import { storage } from "../../firebase/config";
+import { db } from "../../firebase/config";
 
 export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
-  const [photo, setPhoto] = useState([]);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+  const getDataFromFirestore = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "posts"));
+
+      const postsArray = [];
+      snapshot.forEach((doc) => {
+        // console.log(`${doc.id} =>`, doc.data());
+        postsArray.push({ id: doc.id, data: doc.data() });
+      });
+      setPosts(postsArray);
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-  }, [route.params]);
+  };
+
+  useEffect(() => {
+    getDataFromFirestore();
+  }, []);
+
+  // console.log("posts", posts);
 
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
@@ -34,33 +50,6 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
   const handelLogout = () => {
     dispatch(logout());
   };
-
-  useEffect(() => {
-    getAll();
-  }, []);
-
-  const getAll = async () => {
-    try {
-      const mainStorageRef = ref(storage, "postImage");
-
-      await listAll(mainStorageRef).then((res) => {
-        res.items.forEach((item) => {
-          // const url = getDownloadURL(item);
-          // console.log(item);
-          const oneItem = item._location.path;
-          const file = [];
-          file.push(oneItem);
-          setPhoto(file);
-          // console.log("response", res.items);
-          // console.log("response", res.prefixes);
-        });
-      });
-      // console.log(files);
-    } catch (e) {
-      console.log("Помилка завантаження", e);
-    }
-  };
-  // console.log(posts);
 
   const avaImg = require("../../../assets/img/avatar.jpg");
   return (
@@ -78,7 +67,6 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
       <View style={styles.main}>
         <View style={styles.avatar}>
           <Image source={avaImg} size={60} style={styles.avaImg} />
-          <Image source={{ uri: photo[0] }} size={60} style={styles.avaImg} />
 
           <View style={styles.avaContent}>
             <Text style={styles.avaTitle}>Natali Romanova</Text>
@@ -92,11 +80,12 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
               keyExtractor={(item, indx) => indx.toString()}
               renderItem={({ item }) => (
                 <Item
-                  photo={item.photo}
-                  name={item.postContent.name}
-                  locationName={item.postContent.location}
+                  item={item}
+                  // photo={item.photo}
+                  // name={item.postContent.name}
+                  // locationName={item.postContent.location}
                   navigateToScreen={navigateToScreen}
-                  location={item.location}
+                  // location={item.location}
                 />
               )}
             />

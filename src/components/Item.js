@@ -2,20 +2,28 @@ import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 
 export const Item = ({
-  photo,
-  location,
-  locationName,
-  name,
+  item,
+  // photo,
+  // location,
+  // locationName,
+  // name,
   navigateToScreen,
 }) => {
+  const { img, location, contentName, contentLocation } = item.data;
+  // console.log("contentLocation", contentLocation);
+
+  // console.log("contentName", contentName);
+  // console.log("location", location);
+  // console.log("img", img);
+
   return (
     <View style={styles.container}>
-      <Image source={{ uri: photo }} style={styles.img} />
-      <Text style={styles.name}>{name}</Text>
+      <Image source={{ url: img }} style={styles.img} />
+      <Text style={styles.name}>{contentName}</Text>
       <View style={styles.info}>
         <TouchableOpacity
           style={styles.linkComent}
-          onPress={() => navigateToScreen("Comments", { photo })}
+          onPress={() => navigateToScreen("Comments", { img })}
         >
           <FontAwesome name="comment-o" size={24} style={styles.iconComment} />
           <Text style={styles.count}>0</Text>
@@ -30,7 +38,7 @@ export const Item = ({
             color="black"
             style={styles.iconLocation}
           />
-          <Text style={styles.location}>{locationName}</Text>
+          <Text style={styles.location}>{contentLocation}</Text>
         </TouchableOpacity>
       </View>
     </View>

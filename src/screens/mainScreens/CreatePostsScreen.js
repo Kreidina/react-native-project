@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import * as MediaLibrary from "expo-media-library";
+import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import {
   View,
@@ -7,11 +7,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { CameraType } from "expo-camera";
+import { CameraType, Camera } from "expo-camera";
 import uuid from "react-native-uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useSelector } from "react-redux";
+
+// import RNFS from "react-native-fs";
+
 import { CreatePosts } from "../../components/CreatePosts";
-import { storage } from "../../firebase/config";
+import { storage, db } from "../../firebase/config";
+import { collection, addDoc } from "firebase/firestore";
+import { selectName, selectUserId } from "../../redux/auth/selectors";
 
 const initialState = {
   name: null,
@@ -27,10 +33,18 @@ export const CreatePostsScreen = ({ navigation }) => {
   const [postContent, setPostContent] = useState(initialState);
   const [location, setLocation] = useState(null);
 
+  const userName = useSelector(selectName);
+  const userId = useSelector(selectUserId);
+
+  // RNFS.stat(photo).then((fileInfo) => {
+  //   const fileSizeInBytes = fileInfo.size;
+  //   console.log(fileSizeInBytes);
+  // });
+
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      // const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
+      const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
       const locationStatus = await Location.requestForegroundPermissionsAsync();
 
       setHasPermission(
@@ -59,26 +73,26 @@ export const CreatePostsScreen = ({ navigation }) => {
       }
     });
   };
-  // useEffect(() => {
-  //   takePhoto();
-  // }, []);
+
   const takePhoto = async () => {
     if (cameraRef) {
-      const { uri } = await cameraRef.takePictureAsync();
+      const options = {
+        quality: 1,
+        base64: true,
+        exif: false,
+      };
+
+      const { uri } = await cameraRef.takePictureAsync(options);
       const location = await Location.getCurrentPositionAsync();
-      // await MediaLibrary.createAssetAsync(uri);
+      await MediaLibrary.createAssetAsync(uri);
       setPhoto(uri);
       setLocation(location);
     }
   };
 
   const publishSubmit = () => {
-    uploadPhotoToServer();
-    navigation.navigate("DefaultScreen", {
-      photo,
-      postContent,
-      location,
-    });
+    writeDataToFirestore();
+    navigation.navigate("DefaultScreen");
   };
 
   const keyboardHide = () => {
@@ -93,31 +107,45 @@ export const CreatePostsScreen = ({ navigation }) => {
     navigation.navigate("DefaultScreen");
   };
 
+  const writeDataToFirestore = async () => {
+    try {
+      const photoUrl = await uploadPhotoToServer();
+      await addDoc(collection(db, "posts"), {
+        contentName: postContent.name,
+        contentLocation: postContent.location,
+        location: location.coords,
+        img: photoUrl,
+        userId,
+        userName,
+      });
+      // console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      throw e;
+    }
+  };
+
   const uploadPhotoToServer = async () => {
     try {
       if (photo) {
-        const photoBlob = new Blob([photo], { type: "image/jpeg" });
-        const uniqueId = uuid.v4();
-        const storageRef = ref(storage, `postImage/${uniqueId}`);
-        const mainStorageRef = ref(storage, "postImage");
+        // const res = fetch(photo);
+        // const blob = res.blob();
+        // console.log(blob);
 
-        await uploadBytes(storageRef, photoBlob)
-          .then((snapshot) => {
-            // console.log(snapshot.metadata.fullPath);
-            console.log("Фотографія успішно завантажена до Firebase Storage");
-          })
-          .catch((error) => {
-            console.error("Помилка під час завантаження фотографії:", error);
-          });
+        const uniqueId = uuid.v4();
+        const photoFile = new File([photo], uniqueId, { type: "image/jpeg" });
+
+        const storageRef = ref(storage, `postImage/${uniqueId}`);
+
+        await uploadBytes(storageRef, photoFile);
+
+        const photoUrl = await getDownloadURL(storageRef);
+        // console.log(photoUrl);
+        return photoUrl;
       }
     } catch (error) {
       console.error("Помилка завантаження фотографії:", error);
     }
-    // const processedPhoto = await storage
-    //   .ref("postImage")
-    //   .child(uniqueId)
-    //   .getDownloadURL();
-    // console.log(processedPhoto);
   };
 
   return (

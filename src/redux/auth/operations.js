@@ -21,11 +21,13 @@ export const registerDB =
       }
 
       const { uid, displayName } = await auth.currentUser;
+      const emailUser = currentUser.email;
 
       dispatch(
         updateUserProfile({
           userId: uid,
           name: displayName,
+          emailUser,
         })
       );
     } catch (error) {
@@ -40,6 +42,7 @@ export const authStateChanged = () => async (dispatch, getState) => {
         updateUserProfile({
           userId: user.uid,
           name: user.displayName,
+          emailUser: user.email,
         })
       );
       dispatch(authStateChange({ stateChange: true }));
