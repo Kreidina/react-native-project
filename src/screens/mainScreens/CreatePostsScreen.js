@@ -11,7 +11,6 @@ import { CameraType, Camera } from "expo-camera";
 import uuid from "react-native-uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useSelector } from "react-redux";
-
 // import RNFS from "react-native-fs";
 
 import { CreatePosts } from "../../components/CreatePosts";
@@ -35,11 +34,6 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const userName = useSelector(selectName);
   const userId = useSelector(selectUserId);
-
-  // RNFS.stat(photo).then((fileInfo) => {
-  //   const fileSizeInBytes = fileInfo.size;
-  //   console.log(fileSizeInBytes);
-  // });
 
   useEffect(() => {
     (async () => {
@@ -109,7 +103,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const writeDataToFirestore = async () => {
     try {
-      const photoUrl = await uploadPhotoToServer();
+      const photoUrl = await uploadImageAsync(photo);
       await addDoc(collection(db, "posts"), {
         contentName: postContent.name,
         contentLocation: postContent.location,
@@ -118,36 +112,43 @@ export const CreatePostsScreen = ({ navigation }) => {
         userId,
         userName,
       });
-      // console.log("Document written with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
       throw e;
     }
   };
 
-  const uploadPhotoToServer = async () => {
+  async function uploadImageAsync(uri) {
     try {
-      if (photo) {
-        // const res = fetch(photo);
-        // const blob = res.blob();
-        // console.log(blob);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+      });
 
-        const uniqueId = uuid.v4();
-        const photoFile = new File([photo], uniqueId, { type: "image/jpeg" });
+      const uniqueId = uuid.v4();
+      const storageRef = ref(storage, `postImage/${uniqueId}`);
+      await uploadBytes(storageRef, blob);
 
-        const storageRef = ref(storage, `postImage/${uniqueId}`);
+      blob.close();
 
-        await uploadBytes(storageRef, photoFile);
+      const photoUrl = await getDownloadURL(storageRef);
 
-        const photoUrl = await getDownloadURL(storageRef);
-        // console.log(photoUrl);
-        return photoUrl;
-      }
+      return photoUrl;
     } catch (error) {
       console.error("Помилка завантаження фотографії:", error);
     }
-  };
+  }
 
+  
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>

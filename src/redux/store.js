@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
-  persistReducer,
   persistStore,
   FLUSH,
   REHYDRATE,
@@ -9,14 +8,9 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { authReducer } from "./auth/authSlice";
 import thunk from "redux-thunk";
-
-// const persistConfig = {
-//   key: "auth",
-//   storage: AsyncStorage,
-// };
 
 export const store = configureStore({
   reducer: {

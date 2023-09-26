@@ -24,10 +24,8 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
   const getDataFromFirestore = async () => {
     try {
       const snapshot = await getDocs(collection(db, "posts"));
-
       const postsArray = [];
       snapshot.forEach((doc) => {
-        // console.log(`${doc.id} =>`, doc.data());
         postsArray.push({ id: doc.id, data: doc.data() });
       });
       setPosts(postsArray);
@@ -40,8 +38,6 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
   useEffect(() => {
     getDataFromFirestore();
   }, []);
-
-  // console.log("posts", posts);
 
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
@@ -79,14 +75,7 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
               data={posts}
               keyExtractor={(item, indx) => indx.toString()}
               renderItem={({ item }) => (
-                <Item
-                  item={item}
-                  // photo={item.photo}
-                  // name={item.postContent.name}
-                  // locationName={item.postContent.location}
-                  navigateToScreen={navigateToScreen}
-                  // location={item.location}
-                />
+                <Item item={item} navigateToScreen={navigateToScreen} />
               )}
             />
           )}

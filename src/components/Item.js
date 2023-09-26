@@ -1,24 +1,12 @@
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 
-export const Item = ({
-  item,
-  // photo,
-  // location,
-  // locationName,
-  // name,
-  navigateToScreen,
-}) => {
+export const Item = ({ item, navigateToScreen }) => {
   const { img, location, contentName, contentLocation } = item.data;
-  // console.log("contentLocation", contentLocation);
-
-  // console.log("contentName", contentName);
-  // console.log("location", location);
-  // console.log("img", img);
 
   return (
     <View style={styles.container}>
-      <Image source={{ url: img }} style={styles.img} />
+      <Image source={{ uri: img }} style={styles.img} />
       <Text style={styles.name}>{contentName}</Text>
       <View style={styles.info}>
         <TouchableOpacity
