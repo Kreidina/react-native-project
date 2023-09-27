@@ -1,10 +1,62 @@
-import { EvilIcons } from "@expo/vector-icons";
-import { ImageBackground, StyleSheet, View, Image } from "react-native";
+import { MaterialIcons, AntDesign } from "@expo/vector-icons";
+import {
+  ImageBackground,
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  SafeAreaView,
+  Text,
+} from "react-native";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
+import { useDispatch, useSelector } from "react-redux";
 
-export const ProfileScreen = () => {
+import { logout } from "../../redux/auth/operations";
+import { selectName, selectUserId } from "../../redux/auth/selectors";
+import { collection, doc, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { useEffect, useState } from "react";
+import PortfolioItem from "../../components/PortfolioItem";
+
+export const ProfileScreen = ({ navigation }) => {
+  const [posts, setPosts] = useState([]);
+
   const bgrImg = require("../../../assets/img/background.jpg");
   const avaImg = require("../../../assets/img/avatar.jpg");
+  const name = useSelector(selectName);
+  const userId = useSelector(selectUserId);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getUserPosts();
+    // getComments();
+  }, []);
+
+  const navigateToScreen = (screenName, params) => {
+    navigation.navigate(screenName, params);
+  };
+
+  const handelLogout = () => {
+    dispatch(logout());
+  };
+
+  const getUserPosts = async () => {
+    try {
+      const postsCollection = collection(db, "posts");
+      const q = query(postsCollection, where("userId", "==", userId));
+
+      const snapshot = await getDocs(q);
+      const postsArray = [];
+      snapshot.forEach((doc) => {
+        postsArray.push({ id: doc.id, ...doc.data() });
+      });
+      setPosts(postsArray);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
 
   return (
     <BottomTabBarHeightContext.Consumer>
@@ -13,15 +65,67 @@ export const ProfileScreen = () => {
           <View style={styles.bgrContainer}>
             <ImageBackground source={bgrImg} style={styles.bgrImage}>
               <View style={styles.contentContainer}>
-                <View style={styles.avatarBox}>
-                  <Image source={avaImg} style={styles.avaImg} />
+                {false ? (
+                  <View style={styles.avatarBox}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      // onPress={takePhoto}
+                    >
+                      <AntDesign
+                        name="pluscircleo"
+                        size={25}
+                        style={styles.avatarIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.avatarBox}>
+                    <Image source={avaImg} style={styles.avaImg}></Image>
+                    <TouchableOpacity
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      // onPress={setUri(null)}
+                      activeOpacity={0.8}
+                    >
+                      <AntDesign
+                        name="closecircleo"
+                        size={25}
+                        style={{
+                          ...styles.avatarIcon,
+                          ...styles.deleteIcon,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+                <Text style={styles.titleMain}>{name}</Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.linkLogout}
+                  onPress={handelLogout}
+                >
+                  <MaterialIcons
+                    name="logout"
+                    size={25}
+                    style={styles.iconLogout}
+                  />
+                </TouchableOpacity>
+                <View style={styles.posts}>
+                  {posts && (
+                    <SafeAreaView>
+                      <FlatList
+                        data={posts}
+                        keyExtractor={(item, indx) => indx.toString()}
+                        renderItem={({ item }) => (
+                          <PortfolioItem
+                            item={item}
+                            navigateToScreen={navigateToScreen}
+                          />
+                        )}
+                      />
+                    </SafeAreaView>
+                  )}
                 </View>
-                <EvilIcons
-                  name="comment"
-                  size={24}
-                  color="black"
-                  style={styles.iconComment}
-                />
               </View>
             </ImageBackground>
           </View>
@@ -30,6 +134,7 @@ export const ProfileScreen = () => {
     </BottomTabBarHeightContext.Consumer>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -42,13 +147,14 @@ const styles = StyleSheet.create({
   bgrImage: {
     flex: 1,
     resizeMode: "contain",
-    justifyContent: "center",
   },
   contentContainer: {
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
     paddingHorizontal: 16,
     backgroundColor: "#fff",
+    marginTop: 100,
+    height: "100%",
   },
   avatarBox: {
     position: "absolute",
@@ -62,5 +168,44 @@ const styles = StyleSheet.create({
   avaImg: {
     borderRadius: 16,
   },
+  avatarIcon: {
+    color: "#FF6C00",
+    backgroundColor: "#FFF",
+    borderRadius: 55,
+  },
+  avatarLink: {
+    position: "absolute",
+    right: -12,
+    bottom: 14,
+    width: 26,
+    height: 26,
+    borderRadius: 50,
+  },
+  deleteIcon: {
+    color: "#E8E8E8",
+  },
+  titleMain: {
+    color: "#212121",
+    textAlign: "center",
+    fontFamily: "Roboto",
+    fontSize: 30,
+    fontWeight: "500",
+    letterSpacing: 0.3,
+    marginTop: 92,
+  },
   iconComment: { paddingBottom: 300 },
+  linkLogout: {
+    position: "absolute",
+    top: 22,
+    right: 16,
+  },
+  iconLogout: {
+    width: 24,
+    height: 24,
+    color: "#BDBDBD",
+  },
+  posts: {
+    paddingBottom: 250,
+    // marginBottom: 50,
+  },
 });

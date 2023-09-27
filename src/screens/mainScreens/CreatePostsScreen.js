@@ -11,7 +11,6 @@ import { CameraType, Camera } from "expo-camera";
 import uuid from "react-native-uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useSelector } from "react-redux";
-// import RNFS from "react-native-fs";
 
 import { CreatePosts } from "../../components/CreatePosts";
 import { storage, db } from "../../firebase/config";
@@ -98,7 +97,7 @@ export const CreatePostsScreen = ({ navigation }) => {
     setPhoto(null);
     setPostContent(initialState);
     setLocation(null);
-    navigation.navigate("DefaultScreen");
+    navigation.goBack();
   };
 
   const writeDataToFirestore = async () => {
@@ -148,7 +147,6 @@ export const CreatePostsScreen = ({ navigation }) => {
     }
   }
 
-  
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>

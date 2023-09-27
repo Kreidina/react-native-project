@@ -3,22 +3,15 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
-const API_KEY = "AIzaSyDiOUnkKXevLGzWTBemMWQCUSI8NaaVsLs";
-const AUTH_DOMAIN = "react-native-project-7e7fa.firebaseapp.com";
-const PROJECT_ID = "react-native-project-7e7fa";
-const STORAGE_BUCKER = "react-native-project-7e7fa.appspot.com";
-const MESSAGING_SENDER_ID = "893441243562";
-const APP_ID = "1:893441243562:web:ce4b93c1538f6087cb13d3";
-const MEASUREMENT_ID = "G-P0Z6T4H3EC";
 
 const firebaseConfig = {
-  apiKey: API_KEY,
-  authDomain: AUTH_DOMAIN,
-  projectId: PROJECT_ID,
-  storageBucket: STORAGE_BUCKER,
-  messagingSenderId: MESSAGING_SENDER_ID,
-  appId: APP_ID,
-  measurementId: MEASUREMENT_ID,
+  apiKey: process.env.EXPO_PUBLIC_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

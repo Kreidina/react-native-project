@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   StyleSheet,
@@ -9,15 +9,20 @@ import {
   View,
   Image,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 
 import { Item } from "../../components/Item";
 import { logout } from "../../redux/auth/operations";
 import { db } from "../../firebase/config";
+import { selectEmail, selectName } from "../../redux/auth/selectors";
 
 export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
+
+  const name = useSelector(selectName);
+  const email = useSelector(selectEmail);
 
   const dispatch = useDispatch();
 
@@ -65,19 +70,21 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
           <Image source={avaImg} size={60} style={styles.avaImg} />
 
           <View style={styles.avaContent}>
-            <Text style={styles.avaTitle}>Natali Romanova</Text>
-            <Text style={styles.avaText}>email@example.com</Text>
+            <Text style={styles.avaTitle}>{name}</Text>
+            <Text style={styles.avaText}>{email}</Text>
           </View>
         </View>
         <View style={styles.posts}>
           {posts && (
-            <FlatList
-              data={posts}
-              keyExtractor={(item, indx) => indx.toString()}
-              renderItem={({ item }) => (
-                <Item item={item} navigateToScreen={navigateToScreen} />
-              )}
-            />
+            <SafeAreaView>
+              <FlatList
+                data={posts}
+                keyExtractor={(item, indx) => indx.toString()}
+                renderItem={({ item }) => (
+                  <Item item={item} navigateToScreen={navigateToScreen} />
+                )}
+              />
+            </SafeAreaView>
           )}
         </View>
       </View>
@@ -114,7 +121,6 @@ const styles = StyleSheet.create({
   iconLogout: {
     color: "#BDBDBD",
   },
-
   avatar: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,6 +147,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   posts: {
-    // marginBottom: 50,
+    paddingBottom: 250,
   },
 });

@@ -1,8 +1,34 @@
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 export const Item = ({ item, navigateToScreen }) => {
+  const [count, setCount] = useState(0);
+  const [comments, setComments] = useState([]);
+
   const { img, location, contentName, contentLocation } = item.data;
+
+  useEffect(() => {
+    getDataFromFirestore();
+  }, []);
+
+  const getDataFromFirestore = async () => {
+    try {
+      const postsDocRef = doc(db, "posts", item.id);
+      const snapshot = await getDocs(collection(postsDocRef, "comments"));
+      const commentsArray = [];
+      snapshot.forEach((doc) => {
+        commentsArray.push({ ...doc.data() });
+      });
+      setComments(commentsArray);
+      setCount(commentsArray.length);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -11,10 +37,12 @@ export const Item = ({ item, navigateToScreen }) => {
       <View style={styles.info}>
         <TouchableOpacity
           style={styles.linkComent}
-          onPress={() => navigateToScreen("Comments", { img })}
+          onPress={() =>
+            navigateToScreen("Comments", { img, id: item.id, comments })
+          }
         >
           <FontAwesome name="comment-o" size={24} style={styles.iconComment} />
-          <Text style={styles.count}>0</Text>
+          <Text style={styles.count}>{count}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.linkLocation}

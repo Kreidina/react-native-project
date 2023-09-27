@@ -11,8 +11,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
-     "jsEngine": "hermes",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
       "jsEngine": "jsc"
@@ -22,10 +24,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "jsEngine": "jsc"
+      "jsEngine": "jsc",
+      "package": "com.annakav.socialApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2e238451-c87e-43e6-b4f1-14aa61f4fac1"
+      }
     }
   }
 }

@@ -20,6 +20,9 @@ export const CommentsForm = ({ setIsShowKeydoard, postComment }) => {
   };
 
   const commentSubmit = () => {
+    if (comment === "") {
+      return;
+    }
     postComment(comment);
     Keyboard.dismiss();
     setComment("");

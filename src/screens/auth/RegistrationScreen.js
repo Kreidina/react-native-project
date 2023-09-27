@@ -10,15 +10,25 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Button,
+  Alert,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
 import RegisterForm from "../../components/RegisterForm";
 import CustomLink from "../../components/CustomLink";
+import { storage } from "../../firebase/config";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions();
+  const [files, setFiles] = useState(null);
+  const [uri, setUri] = useState(null);
+  const bgrImg = require("../../../assets/img/background.jpg");
 
+  // keyboard
   const keyboardHide = () => {
     setIsShowKeydoard(false);
     Keyboard.dismiss();
@@ -28,8 +38,86 @@ export const RegistrationScreen = ({ navigation }) => {
     navigation.navigate(pageName);
   };
 
-  const bgrImg = require("../../../assets/img/background.jpg");
-  // const avaImg = require("../../../assets/img/avatar.jpg");
+  // permission check
+  if (permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+    return (
+      <View style={styles.container}>
+        <Text>Permission Not Granted - {permission?.status}</Text>
+        <StatusBar style="auto" />
+        <Button title="Request Permission" onPress={requestPermission}></Button>
+      </View>
+    );
+  }
+
+  const uploadToFirebase = async (uri, name, onProgress) => {
+    const fetchResponse = await fetch(uri);
+    const theBlob = await fetchResponse.blob();
+
+    const imageRef = ref(storage, `avatars/${name}`);
+
+    const uploadTask = uploadBytesResumable(imageRef, theBlob);
+
+    // const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+    // console.log("downloadUrl", downloadUrl);
+    // setFiles(downloadUrl);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          onProgress && onProgress(progress);
+        },
+        (error) => {
+          console.log(error, "error");
+          reject(error);
+        },
+
+        async () => {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          setFiles(downloadUrl);
+          resolve({
+            downloadUrl,
+            metadata: uploadTask.snapshot.metadata,
+          });
+        }
+      );
+    });
+  };
+  console.log("files", files);
+  console.log("uri", uri);
+
+  const takePhoto = async () => {
+    try {
+      const cameraResp = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        quality: 1,
+      });
+      if (!cameraResp.canceled) {
+        const { uri } = cameraResp.assets[0];
+        setUri(uri);
+        await uploadToPhoto(cameraResp);
+      }
+    } catch (e) {
+      Alert.alert("Error Make Image " + e.message);
+    }
+  };
+
+  const uploadToPhoto = async (cameraRef) => {
+    try {
+      if (!cameraRef.canceled) {
+        const { uri } = cameraRef.assets[0];
+        const fileName = uri.split("/").pop();
+
+        await uploadToFirebase(uri, fileName, (v) => console.log(v));
+      }
+    } catch (e) {
+      Alert.alert("Error Uploading Image " + e.message);
+      console.log(e.message);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -40,12 +128,25 @@ export const RegistrationScreen = ({ navigation }) => {
               <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
-                <View>
+                {/* <View style={styles.avatarBox}> */}
+                {/* <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      onPress={takePhoto}
+                    >
+                      <AntDesign
+                        name="pluscircleo"
+                        size={25}
+                        style={styles.avatarIcon}
+                      />
+                    </TouchableOpacity> */}
+                {/* </View> */}
+                {!uri ? (
                   <View style={styles.avatarBox}>
                     <TouchableOpacity
                       activeOpacity={0.8}
                       style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      onPress={() => console.log("add")}
+                      onPress={takePhoto}
                     >
                       <AntDesign
                         name="pluscircleo"
@@ -54,43 +155,31 @@ export const RegistrationScreen = ({ navigation }) => {
                       />
                     </TouchableOpacity>
                   </View>
-                  {/* {!isShowKeyboard ? (
-                    <View style={styles.avatarBox}>
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                        onPress={() => console.log("add")}
-                      >
-                        <AntDesign
-                          name="pluscircleo"
-                          size={25}
-                          style={styles.avatarIcon}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <View style={styles.avatarBox}>
-                      <Image source={avaImg} style={styles.avaImg}></Image>
-                      <TouchableOpacity
-                        style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                        onPress={() => console.log("delete")}
-                        activeOpacity={0.8}
-                      >
-                        <AntDesign
-                          name="closecircleo"
-                          size={25}
-                          style={{ ...styles.avatarIcon, ...styles.deleteIcon }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  )} */}
-                </View>
-
+                ) : (
+                  <View style={styles.avatarBox}>
+                    <Image source={{ uri: uri }} style={styles.avaImg}></Image>
+                    <TouchableOpacity
+                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
+                      onPress={setUri(null)}
+                      activeOpacity={0.8}
+                    >
+                      <AntDesign
+                        name="closecircleo"
+                        size={25}
+                        style={{
+                          ...styles.avatarIcon,
+                          ...styles.deleteIcon,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
                 <Text style={styles.title}>Реєстрація</Text>
 
                 <RegisterForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
+                  uploadToPhoto={uploadToPhoto}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>
