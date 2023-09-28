@@ -4,7 +4,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import CustomLink from "./CustomLink";
@@ -15,12 +15,19 @@ const initialState = {
   name: "",
   email: "",
   password: "",
+  img: "",
 };
 
-const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, uploadToPhoto }) => {
+const RegisterForm = ({
+  isShowKeyboard,
+  setIsShowKeydoard,
+  files,
+  setFiles,
+}) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+
   const dispatch = useDispatch();
 
   const handelFocus = (inputName) => {
@@ -32,11 +39,24 @@ const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, uploadToPhoto }) => {
     setSecureTextEntry(!secureTextEntry);
   };
 
-  const handelSubmit = () => {
+  useEffect(() => {
+    if (files) {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          img: files,
+        };
+      });
+    }
+  }, [files]);
+
+  const handelSubmit = async () => {
     if (!state.email || !state.password || !state.name) return;
-    uploadToPhoto();
+
     dispatch(registerDB(state));
+
     setState(initialState);
+    setFiles(null);
   };
 
   return (

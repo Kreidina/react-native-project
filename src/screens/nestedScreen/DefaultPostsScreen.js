@@ -12,22 +12,29 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import { Item } from "../../components/Item";
-
-import { selectEmail, selectName } from "../../redux/auth/selectors";
+import {
+  selectAvatar,
+  selectEmail,
+  selectName,
+} from "../../redux/auth/selectors";
 
 import { handelLogout } from "../../functions/helpers";
 import { getAllPosts } from "../../functions/getRequest";
+import Item from "../../components/Item";
 
 export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
 
   const name = useSelector(selectName);
   const email = useSelector(selectEmail);
+  const avatar = useSelector(selectAvatar);
+
+  console.log("email", email);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("render");
     getAllPosts(setPosts);
   }, []);
 
@@ -35,7 +42,6 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
     navigation.navigate(screenName, params);
   };
 
-  const avaImg = require("../../../assets/img/avatar.jpg");
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -50,13 +56,15 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.main}>
         <View style={styles.avatar}>
-          <Image source={avaImg} size={60} style={styles.avaImg} />
-
+          {avatar && (
+            <Image source={{ uri: avatar }} size={60} style={styles.avaImg} />
+          )}
           <View style={styles.avaContent}>
             <Text style={styles.avaTitle}>{name}</Text>
             <Text style={styles.avaText}>{email}</Text>
           </View>
         </View>
+
         <View style={styles.posts}>
           {posts && (
             <SafeAreaView>
@@ -110,6 +118,7 @@ const styles = StyleSheet.create({
     paddingTop: 32,
   },
   avaImg: {
+    borderRadius: 16,
     width: 60,
     height: 60,
   },

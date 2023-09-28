@@ -5,29 +5,50 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { auth } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import { authSlice } from "./authSlice";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
 export const registerDB =
-  ({ email, password, name }) =>
+  ({ email, password, name, img }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       const currentUser = await auth.currentUser;
+
+      await addDoc(collection(db, "avatars"), {
+        avaImg: img,
+        userId: currentUser.uid,
+      });
+
+      const postsCollection = collection(db, "avatars");
+      const q = query(postsCollection, where("userId", "==", currentUser.uid));
+      const snapshot = await getDocs(q);
+      let avatarImg;
+
+      snapshot.forEach((doc) => {
+        const { avaImg } = doc.data();
+        avatarImg = avaImg;
+      });
+
       if (currentUser) {
-        await updateProfile(currentUser, { displayName: name });
+        await updateProfile(currentUser, {
+          displayName: name,
+          photoURL: avatarImg,
+        });
       }
 
-      const { uid, displayName } = await auth.currentUser;
+      const { uid, displayName, photoURL } = await auth.currentUser;
       const emailUser = currentUser.email;
 
       dispatch(
         updateUserProfile({
           userId: uid,
           name: displayName,
-          emailUser,
+          emailUser: emailUser.email,
+          avaImg: photoURL,
         })
       );
     } catch (error) {
@@ -43,6 +64,7 @@ export const authStateChanged = () => async (dispatch, getState) => {
           userId: user.uid,
           name: user.displayName,
           emailUser: user.email,
+          avaImg: user.photoURL,
         })
       );
       dispatch(authStateChange({ stateChange: true }));

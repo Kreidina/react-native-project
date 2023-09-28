@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   TouchableWithoutFeedback,
@@ -15,15 +15,23 @@ import { CommentsItem } from "../../components/CommentsItem";
 import Header from "../../components/Header";
 
 import { db } from "../../firebase/config";
-import { selectUserId } from "../../redux/auth/selectors";
+import { selectAvatar, selectUserId } from "../../redux/auth/selectors";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { formattedDate, formattedTime } from "../../functions/dateCount";
+import { getAllComments } from "../../functions/getRequest";
 
 export const CommentsScreen = ({ navigation, route }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
+  const [comments, setComments] = useState([]);
 
-  const { img, id, comments } = route.params;
+  const { img, id } = route.params;
+
   const userId = useSelector(selectUserId);
+  const avatar = useSelector(selectAvatar);
+
+  useEffect(() => {
+    getAllComments(id, setComments);
+  }, []);
 
   const keyboardHide = () => {
     setIsShowKeydoard(false);
@@ -36,7 +44,11 @@ export const CommentsScreen = ({ navigation, route }) => {
       comment: value,
       date: `${formattedDate} | ${formattedTime}`,
       userId,
+      avaImg: avatar,
     });
+    if (value !== "") {
+      await getAllComments(id, setComments);
+    }
   };
 
   const backToPosts = () => {
@@ -59,7 +71,9 @@ export const CommentsScreen = ({ navigation, route }) => {
               <FlatList
                 data={comments}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <CommentsItem comment={item} />}
+                renderItem={({ item }) => (
+                  <CommentsItem comment={item} id={id} />
+                )}
               />
             </SafeAreaView>
           )}

@@ -11,12 +11,12 @@ const ProfileItem = ({ item, navigateToScreen }) => {
   const [countComment, setCountComment] = useState(0);
   const [countLike, setCountLike] = useState(0);
 
-  const { contentLocation, contentName, img, location, userId, userName } =
-    item;
+  const { contentLocation, contentName, img, location, userId } = item;
 
   useEffect(() => {
-    getAllComments(item.id, setComments, setCountComment);
-  }, []);
+    getAllComments(item.id, setComments);
+    setCountComment(comments.length);
+  }, [comments]);
 
   const like = async () => {
     try {
@@ -34,9 +34,7 @@ const ProfileItem = ({ item, navigateToScreen }) => {
         <View style={styles.comLike}>
           <TouchableOpacity
             style={styles.link}
-            onPress={() =>
-              navigateToScreen("Comments", { img, id: item.id, comments })
-            }
+            onPress={() => navigateToScreen("Comments", { img, id: item.id })}
           >
             <FontAwesome name="comment" size={24} style={styles.iconComment} />
             <Text style={{ ...styles.value, marginRight: 24 }}>

@@ -25,7 +25,6 @@ export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const [files, setFiles] = useState(null);
-  const [uri, setUri] = useState(null);
   const bgrImg = require("../../../assets/img/background.jpg");
 
   // keyboard
@@ -57,10 +56,6 @@ export const RegistrationScreen = ({ navigation }) => {
 
     const uploadTask = uploadBytesResumable(imageRef, theBlob);
 
-    // const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-    // console.log("downloadUrl", downloadUrl);
-    // setFiles(downloadUrl);
-
     return new Promise((resolve, reject) => {
       uploadTask.on(
         "state_changed",
@@ -85,8 +80,6 @@ export const RegistrationScreen = ({ navigation }) => {
       );
     });
   };
-  console.log("files", files);
-  console.log("uri", uri);
 
   const takePhoto = async () => {
     try {
@@ -95,11 +88,8 @@ export const RegistrationScreen = ({ navigation }) => {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         quality: 1,
       });
-      if (!cameraResp.canceled) {
-        const { uri } = cameraResp.assets[0];
-        setUri(uri);
-        await uploadToPhoto(cameraResp);
-      }
+
+      await uploadToPhoto(cameraResp);
     } catch (e) {
       Alert.alert("Error Make Image " + e.message);
     }
@@ -109,6 +99,7 @@ export const RegistrationScreen = ({ navigation }) => {
     try {
       if (!cameraRef.canceled) {
         const { uri } = cameraRef.assets[0];
+
         const fileName = uri.split("/").pop();
 
         await uploadToFirebase(uri, fileName, (v) => console.log(v));
@@ -128,20 +119,7 @@ export const RegistrationScreen = ({ navigation }) => {
               <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
-                {/* <View style={styles.avatarBox}> */}
-                {/* <TouchableOpacity
-                      activeOpacity={0.8}
-                      style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      onPress={takePhoto}
-                    >
-                      <AntDesign
-                        name="pluscircleo"
-                        size={25}
-                        style={styles.avatarIcon}
-                      />
-                    </TouchableOpacity> */}
-                {/* </View> */}
-                {!uri ? (
+                {!files ? (
                   <View style={styles.avatarBox}>
                     <TouchableOpacity
                       activeOpacity={0.8}
@@ -157,10 +135,13 @@ export const RegistrationScreen = ({ navigation }) => {
                   </View>
                 ) : (
                   <View style={styles.avatarBox}>
-                    <Image source={{ uri: uri }} style={styles.avaImg}></Image>
+                    <Image
+                      source={{ uri: files }}
+                      style={styles.avaImg}
+                    ></Image>
                     <TouchableOpacity
                       style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      onPress={setUri(null)}
+                      onPress={() => setFiles(null)}
                       activeOpacity={0.8}
                     >
                       <AntDesign
@@ -179,7 +160,8 @@ export const RegistrationScreen = ({ navigation }) => {
                 <RegisterForm
                   isShowKeyboard={isShowKeyboard}
                   setIsShowKeydoard={setIsShowKeydoard}
-                  uploadToPhoto={uploadToPhoto}
+                  files={files}
+                  setFiles={setFiles}
                 />
                 {!isShowKeyboard && (
                   <View style={styles.linkForm}>
@@ -231,6 +213,8 @@ const styles = StyleSheet.create({
   },
   avaImg: {
     borderRadius: 16,
+    width: 120,
+    height: 120,
   },
   avatarIcon: {
     color: "#FF6C00",

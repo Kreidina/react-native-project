@@ -13,26 +13,32 @@ import {
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectName, selectUserId } from "../../redux/auth/selectors";
+import {
+  selectAvatar,
+  selectName,
+  selectUserId,
+} from "../../redux/auth/selectors";
 
 import ProfileItem from "../../components/ProfiIetem";
 
 import { handelLogout } from "../../functions/helpers";
-import { getUserPosts } from "../../functions/getRequest";
+import { getUserImage } from "../../functions/getRequest";
 
 export const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   const bgrImg = require("../../../assets/img/background.jpg");
-  const avaImg = require("../../../assets/img/avatar.jpg");
 
   const name = useSelector(selectName);
   const userId = useSelector(selectUserId);
+  const avatar = useSelector(selectAvatar);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserPosts(userId, setPosts);
+    console.log("render Prof");
+
+    getUserImage(userId, setPosts, "posts");
   }, []);
 
   const navigateToScreen = (screenName, params) => {
@@ -62,7 +68,9 @@ export const ProfileScreen = ({ navigation }) => {
                   </View>
                 ) : (
                   <View style={styles.avatarBox}>
-                    <Image source={avaImg} style={styles.avaImg}></Image>
+                    {avatar && (
+                      <Image source={{ uri: avatar }} style={styles.avaImg} />
+                    )}
                     <TouchableOpacity
                       style={{ ...styles.avatarIcon, ...styles.avatarLink }}
                       // onPress={setUri(null)}
@@ -91,6 +99,7 @@ export const ProfileScreen = ({ navigation }) => {
                     style={styles.iconLogout}
                   />
                 </TouchableOpacity>
+
                 <View style={styles.posts}>
                   {posts && (
                     <SafeAreaView>
@@ -148,6 +157,8 @@ const styles = StyleSheet.create({
   },
   avaImg: {
     borderRadius: 16,
+    width: 120,
+    height: 120,
   },
   avatarIcon: {
     color: "#FF6C00",

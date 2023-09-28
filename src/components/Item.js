@@ -3,15 +3,16 @@ import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { getAllComments } from "../functions/getRequest";
 
-export const Item = ({ item, navigateToScreen }) => {
+const Item = ({ item, navigateToScreen }) => {
   const [count, setCount] = useState(0);
   const [comments, setComments] = useState([]);
 
-  const { img, location, contentName, contentLocation } = item.data;
+  const { img, location, contentName, contentLocation } = item;
 
   useEffect(() => {
-    getAllComments(item.id, setComments, setCount);
-  }, []);
+    getAllComments(item.id, setComments);
+    setCount(comments.length);
+  }, [comments]);
 
   return (
     <View style={styles.container}>
@@ -20,9 +21,7 @@ export const Item = ({ item, navigateToScreen }) => {
       <View style={styles.info}>
         <TouchableOpacity
           style={styles.linkComent}
-          onPress={() =>
-            navigateToScreen("Comments", { img, id: item.id, comments })
-          }
+          onPress={() => navigateToScreen("Comments", { img, id: item.id })}
         >
           <FontAwesome name="comment-o" size={24} style={styles.iconComment} />
           <Text style={styles.count}>{count}</Text>
@@ -43,6 +42,8 @@ export const Item = ({ item, navigateToScreen }) => {
     </View>
   );
 };
+
+export default Item;
 
 const styles = StyleSheet.create({
   container: {
