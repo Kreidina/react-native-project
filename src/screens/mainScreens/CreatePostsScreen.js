@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { CameraType, Camera } from "expo-camera";
-import uuid from "react-native-uuid";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useSelector } from "react-redux";
 
 import { CreatePosts } from "../../components/CreatePosts";
-import { storage, db } from "../../firebase/config";
+import { db } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
 import { selectName, selectUserId } from "../../redux/auth/selectors";
+import { keyboardHide } from "../../functions/helpers";
+import { uploadImage } from "../../functions/uploadFirebase";
 
 const initialState = {
   name: null,
@@ -88,11 +83,6 @@ export const CreatePostsScreen = ({ navigation }) => {
     navigation.navigate("DefaultScreen");
   };
 
-  const keyboardHide = () => {
-    setIsShowKeydoard(false);
-    Keyboard.dismiss();
-  };
-
   const backToPosts = () => {
     setPhoto(null);
     setPostContent(initialState);
@@ -102,7 +92,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const writeDataToFirestore = async () => {
     try {
-      const photoUrl = await uploadImageAsync(photo);
+      const photoUrl = await uploadImage(photo);
       await addDoc(collection(db, "posts"), {
         contentName: postContent.name,
         contentLocation: postContent.location,
@@ -117,38 +107,8 @@ export const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  async function uploadImageAsync(uri) {
-    try {
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-          resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-          console.log(e);
-          reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", uri, true);
-        xhr.send(null);
-      });
-
-      const uniqueId = uuid.v4();
-      const storageRef = ref(storage, `postImage/${uniqueId}`);
-      await uploadBytes(storageRef, blob);
-
-      blob.close();
-
-      const photoUrl = await getDownloadURL(storageRef);
-
-      return photoUrl;
-    } catch (error) {
-      console.error("Помилка завантаження фотографії:", error);
-    }
-  }
-
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={() => keyboardHide(setIsShowKeydoard)}>
       <View style={styles.container}>
         <CreatePosts
           isShowKeyboard={isShowKeyboard}

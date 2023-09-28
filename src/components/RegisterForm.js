@@ -17,7 +17,7 @@ const initialState = {
   password: "",
 };
 
-const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
+const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard, uploadToPhoto }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -34,6 +34,7 @@ const RegisterForm = ({ isShowKeyboard, setIsShowKeydoard }) => {
 
   const handelSubmit = () => {
     if (!state.email || !state.password || !state.name) return;
+    uploadToPhoto();
     dispatch(registerDB(state));
     setState(initialState);
   };

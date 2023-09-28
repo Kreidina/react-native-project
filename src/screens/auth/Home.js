@@ -17,9 +17,9 @@ export const Home = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarIcon: ({ focuced, size, color }) => {
+        tabBarIcon: ({ focused, size, color }) => {
           let icon;
-          color = focuced ? "#FF6C00" : "rgba(33, 33, 33, 0.8)";
+          color = focused ? "#FF6C00" : "rgba(33, 33, 33, 0.8)";
           if (route.name === "Create") {
             icon = <AntDesign name="plus" size={16} style={styles.iconPlus} />;
           } else if (route.name === "Profile") {
@@ -43,6 +43,7 @@ export const Home = () => {
     </MainTab.Navigator>
   );
 };
+
 const styles = StyleSheet.create({
   iconPlus: {
     textAlign: "center",

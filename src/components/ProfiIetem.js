@@ -1,10 +1,12 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { AntDesign, FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
-import { collection, doc, getDocs } from "firebase/firestore";
-import { db } from "../firebase/config";
 
-const PortfolioItem = ({ item, navigateToScreen }) => {
+import { addDoc, collection, doc } from "firebase/firestore";
+import { db } from "../firebase/config";
+import { getAllComments } from "../functions/getRequest";
+
+const ProfileItem = ({ item, navigateToScreen }) => {
   const [comments, setComments] = useState([]);
   const [countComment, setCountComment] = useState(0);
   const [countLike, setCountLike] = useState(0);
@@ -13,24 +15,16 @@ const PortfolioItem = ({ item, navigateToScreen }) => {
     item;
 
   useEffect(() => {
-    getComments();
+    getAllComments(item.id, setComments, setCountComment);
   }, []);
 
-  const getComments = async () => {
+  const like = async () => {
     try {
       const postsDocRef = doc(db, "posts", item.id);
-
-      const snapshot = await getDocs(collection(postsDocRef, "comments"));
-      const commentsArray = [];
-      snapshot.forEach((doc) => {
-        commentsArray.push({ ...doc.data() });
+      await addDoc(collection(postsDocRef, "likes"), {
+        userId,
       });
-      setComments(commentsArray);
-      setCountComment(commentsArray.length);
-    } catch (error) {
-      console.log("Comments error", error);
-      throw error;
-    }
+    } catch (e) {}
   };
   return (
     <View style={styles.container}>
@@ -49,7 +43,7 @@ const PortfolioItem = ({ item, navigateToScreen }) => {
               {countComment}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.link}>
+          <TouchableOpacity style={styles.link} onPress={like}>
             {true ? (
               <AntDesign name="like1" size={24} style={styles.likeIcon} />
             ) : (
@@ -82,7 +76,7 @@ const PortfolioItem = ({ item, navigateToScreen }) => {
   );
 };
 
-export default PortfolioItem;
+export default ProfileItem;
 
 const styles = StyleSheet.create({
   img: {

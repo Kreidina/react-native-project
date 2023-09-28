@@ -1,8 +1,7 @@
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
-import { collection, doc, getDocs } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { getAllComments } from "../functions/getRequest";
 
 export const Item = ({ item, navigateToScreen }) => {
   const [count, setCount] = useState(0);
@@ -11,24 +10,8 @@ export const Item = ({ item, navigateToScreen }) => {
   const { img, location, contentName, contentLocation } = item.data;
 
   useEffect(() => {
-    getDataFromFirestore();
+    getAllComments(item.id, setComments, setCount);
   }, []);
-
-  const getDataFromFirestore = async () => {
-    try {
-      const postsDocRef = doc(db, "posts", item.id);
-      const snapshot = await getDocs(collection(postsDocRef, "comments"));
-      const commentsArray = [];
-      snapshot.forEach((doc) => {
-        commentsArray.push({ ...doc.data() });
-      });
-      setComments(commentsArray);
-      setCount(commentsArray.length);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
   return (
     <View style={styles.container}>

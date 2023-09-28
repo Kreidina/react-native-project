@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 import {
   ImageBackground,
@@ -12,50 +13,30 @@ import {
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { useDispatch, useSelector } from "react-redux";
 
-import { logout } from "../../redux/auth/operations";
 import { selectName, selectUserId } from "../../redux/auth/selectors";
-import { collection, doc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../firebase/config";
-import { useEffect, useState } from "react";
-import PortfolioItem from "../../components/PortfolioItem";
+
+import ProfileItem from "../../components/ProfiIetem";
+
+import { handelLogout } from "../../functions/helpers";
+import { getUserPosts } from "../../functions/getRequest";
 
 export const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   const bgrImg = require("../../../assets/img/background.jpg");
   const avaImg = require("../../../assets/img/avatar.jpg");
+
   const name = useSelector(selectName);
   const userId = useSelector(selectUserId);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserPosts();
-    // getComments();
+    getUserPosts(userId, setPosts);
   }, []);
 
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
-  };
-
-  const handelLogout = () => {
-    dispatch(logout());
-  };
-
-  const getUserPosts = async () => {
-    try {
-      const postsCollection = collection(db, "posts");
-      const q = query(postsCollection, where("userId", "==", userId));
-
-      const snapshot = await getDocs(q);
-      const postsArray = [];
-      snapshot.forEach((doc) => {
-        postsArray.push({ id: doc.id, ...doc.data() });
-      });
-      setPosts(postsArray);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
   };
 
   return (
@@ -102,7 +83,7 @@ export const ProfileScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={styles.linkLogout}
-                  onPress={handelLogout}
+                  onPress={() => handelLogout(dispatch)}
                 >
                   <MaterialIcons
                     name="logout"
@@ -117,7 +98,7 @@ export const ProfileScreen = ({ navigation }) => {
                         data={posts}
                         keyExtractor={(item, indx) => indx.toString()}
                         renderItem={({ item }) => (
-                          <PortfolioItem
+                          <ProfileItem
                             item={item}
                             navigateToScreen={navigateToScreen}
                           />

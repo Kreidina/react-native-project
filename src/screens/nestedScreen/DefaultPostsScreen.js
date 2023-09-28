@@ -11,12 +11,13 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
 
 import { Item } from "../../components/Item";
-import { logout } from "../../redux/auth/operations";
-import { db } from "../../firebase/config";
+
 import { selectEmail, selectName } from "../../redux/auth/selectors";
+
+import { handelLogout } from "../../functions/helpers";
+import { getAllPosts } from "../../functions/getRequest";
 
 export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
@@ -26,30 +27,12 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
 
   const dispatch = useDispatch();
 
-  const getDataFromFirestore = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "posts"));
-      const postsArray = [];
-      snapshot.forEach((doc) => {
-        postsArray.push({ id: doc.id, data: doc.data() });
-      });
-      setPosts(postsArray);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
-
   useEffect(() => {
-    getDataFromFirestore();
+    getAllPosts(setPosts);
   }, []);
 
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
-  };
-
-  const handelLogout = () => {
-    dispatch(logout());
   };
 
   const avaImg = require("../../../assets/img/avatar.jpg");
@@ -60,7 +43,7 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.linkLogout}
-          onPress={handelLogout}
+          onPress={() => handelLogout(dispatch)}
         >
           <MaterialIcons name="logout" size={24} style={styles.iconLogout} />
         </TouchableOpacity>

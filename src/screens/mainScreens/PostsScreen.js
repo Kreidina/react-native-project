@@ -9,21 +9,8 @@ export const PostsScreen = () => {
       initialRouteName="DefaultScreen"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: ({ focused, size, color }) => {
-          if (!focused) {
-            return null;
-          }
-          let display;
-          let opacity;
-          if (route.name === "Comments") {
-            opacity = 0;
-            display = "none";
-          } else if (route.name === "Map") {
-            opacity = 0;
-            display = "none";
-          }
-          return { display: display, opacity: 0 };
-        },
+        tabBarVisible:
+          route.name === "Comments" || route.name === "Map" ? false : true,
       })}
     >
       <NestedStack.Screen name="DefaultScreen" component={DefaultPostsScreen} />
