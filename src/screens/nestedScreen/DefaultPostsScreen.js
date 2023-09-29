@@ -22,6 +22,7 @@ import Item from "../../components/Item";
 
 export const DefaultPostsScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [isRefreshig, setIsRefreshig] = useState(false);
 
   const name = useSelector(selectName);
   const email = useSelector(selectEmail);
@@ -30,7 +31,7 @@ export const DefaultPostsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAllPosts(setPosts);
+    getAllPosts(setPosts, setIsRefreshig);
   }, []);
 
   const navigateToScreen = (screenName, params) => {
@@ -78,6 +79,8 @@ export const DefaultPostsScreen = ({ navigation }) => {
                 renderItem={({ item }) => (
                   <Item item={item} navigateToScreen={navigateToScreen} />
                 )}
+                onRefresh={() => getAllPosts(setPosts, setIsRefreshig)}
+                refreshing={isRefreshig}
               />
             </SafeAreaView>
           )}

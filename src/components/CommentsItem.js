@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import { useSelector } from "react-redux";
+import { Feather } from "@expo/vector-icons";
 
 import { selectUserId } from "../redux/auth/selectors";
 
@@ -17,7 +18,16 @@ export const CommentsItem = ({ comment }) => {
             <Text style={styles.text}>{comment.comment}</Text>
             <Text style={styles.data}>{date}</Text>
           </View>
-          <Image source={{ uri: avaImg }} style={styles.avatar} />
+          {avaImg ? (
+            <Image source={{ uri: avaImg }} style={styles.avatar} />
+          ) : (
+            <Feather
+              name="user"
+              size={24}
+              color="black"
+              style={styles.avatar}
+            />
+          )}
         </View>
       ) : (
         <View style={styles.containerRight}>

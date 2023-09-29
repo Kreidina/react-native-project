@@ -17,9 +17,11 @@ export const getAllComments = async (id, setComments) => {
   }
 };
 
-export const getUserImage = async (id, setPosts, collectionName) => {
+export const getUserImage = async (id, setPosts, setIsRefreshig) => {
   try {
-    const postsCollection = collection(db, collectionName);
+    setIsRefreshig(true);
+
+    const postsCollection = collection(db, "posts");
     const q = query(postsCollection, where("userId", "==", id));
 
     const snapshot = await getDocs(q);
@@ -28,14 +30,16 @@ export const getUserImage = async (id, setPosts, collectionName) => {
       postsArray.push({ id: doc.id, ...doc.data() });
     });
     setPosts(postsArray);
+    setIsRefreshig(false);
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
-export const getAllPosts = async (setPosts) => {
+export const getAllPosts = async (setPosts, setIsRefreshig) => {
   try {
+    setIsRefreshig(true);
     const postsCollection = collection(db, "posts");
 
     const snapshot = await getDocs(postsCollection);
@@ -44,6 +48,7 @@ export const getAllPosts = async (setPosts) => {
       postsArray.push({ id: doc.id, ...doc.data() });
     });
     setPosts(postsArray);
+    setIsRefreshig(false);
   } catch (error) {
     console.log(error);
     throw error;

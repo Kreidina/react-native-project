@@ -31,6 +31,7 @@ import { updateAvatarImg } from "../../redux/auth/operations";
 export const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [files, setFiles] = useState(null);
+  const [isRefreshig, setIsRefreshig] = useState(false);
 
   const bgrImg = require("../../../assets/img/background.jpg");
 
@@ -40,7 +41,7 @@ export const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserImage(userId, setPosts, "posts");
+    getUserImage(userId, setPosts, setIsRefreshig);
   }, []);
 
   useEffect(() => {
@@ -147,6 +148,10 @@ export const ProfileScreen = ({ navigation }) => {
                             navigateToScreen={navigateToScreen}
                           />
                         )}
+                        onRefresh={() =>
+                          getUserImage(userId, setPosts, setIsRefreshig)
+                        }
+                        refreshing={isRefreshig}
                       />
                     </SafeAreaView>
                   )}
