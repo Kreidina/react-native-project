@@ -8,7 +8,7 @@ export const CommentsItem = ({ comment }) => {
 
   const left = userId !== id;
 
-  console.log(date);
+  // console.log(date);
 
   return (
     <>
