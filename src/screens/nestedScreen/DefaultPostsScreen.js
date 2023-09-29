@@ -1,4 +1,4 @@
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,19 +22,16 @@ import { handelLogout } from "../../functions/helpers";
 import { getAllPosts } from "../../functions/getRequest";
 import Item from "../../components/Item";
 
-export const DefaultPostsScreen = ({ navigation, route }) => {
+export const DefaultPostsScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   const name = useSelector(selectName);
   const email = useSelector(selectEmail);
   const avatar = useSelector(selectAvatar);
 
-  console.log("email", email);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("render");
     getAllPosts(setPosts);
   }, []);
 
@@ -56,8 +53,17 @@ export const DefaultPostsScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.main}>
         <View style={styles.avatar}>
-          {avatar && (
+          {avatar ? (
             <Image source={{ uri: avatar }} size={60} style={styles.avaImg} />
+          ) : (
+            <View style={styles.boxAva}>
+              <Feather
+                name="user"
+                size={24}
+                color="black"
+                style={styles.avaIcon}
+              />
+            </View>
           )}
           <View style={styles.avaContent}>
             <Text style={styles.avaTitle}>{name}</Text>
@@ -121,6 +127,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: 60,
     height: 60,
+  },
+  boxAva: {
+    position: "relative",
+    borderRadius: 16,
+    width: 60,
+    height: 60,
+    backgroundColor: "#F6F6F6",
+  },
+  avaIcon: {
+    position: "absolute",
+    top: 17,
+    right: 17.5,
   },
   avaContent: {
     marginLeft: 6,

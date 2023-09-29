@@ -20,9 +20,11 @@ export const LoginScreen = ({ navigation }) => {
     setIsShowKeydoard(false);
     Keyboard.dismiss();
   };
+
   const navigatePage = (pageName) => {
     navigation.navigate(pageName);
   };
+
   const bgrImg = require("../../../assets/img/background.jpg");
 
   return (

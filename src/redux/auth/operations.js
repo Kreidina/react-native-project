@@ -7,9 +7,18 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../../firebase/config";
 import { authSlice } from "./authSlice";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
-const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
+const { updateUserProfile, authStateChange, authSignOut, updateAvatar } =
+  authSlice.actions;
 
 export const registerDB =
   ({ email, password, name, img }) =>
@@ -55,6 +64,51 @@ export const registerDB =
       throw error;
     }
   };
+
+export const updateAvatarImg = (files) => async (dispatch, getState) => {
+  const currentUser = await auth.currentUser;
+  const avatarsCollection = collection(db, "avatars");
+  const userAvaQuery = query(
+    avatarsCollection,
+    where("userId", "==", currentUser.uid)
+  );
+
+  const querySnapshot = await getDocs(userAvaQuery);
+
+  if (!querySnapshot.empty) {
+    const document = querySnapshot.docs[0];
+    const documentId = document.id;
+
+    const documentRef = doc(avatarsCollection, documentId);
+
+    await updateDoc(documentRef, {
+      avaImg: files,
+      userId: currentUser.uid,
+    });
+  }
+
+  const snapshot = await getDocs(userAvaQuery);
+  let avatarImg;
+
+  snapshot.forEach((doc) => {
+    const { avaImg } = doc.data();
+    avatarImg = avaImg;
+  });
+
+  if (currentUser) {
+    await updateProfile(currentUser, {
+      photoURL: avatarImg,
+    });
+  }
+
+  const { photoURL } = await auth.currentUser;
+
+  dispatch(
+    updateAvatar({
+      avaImg: photoURL,
+    })
+  );
+};
 
 export const authStateChanged = () => async (dispatch, getState) => {
   await onAuthStateChanged(auth, (user) => {

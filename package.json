@@ -16,13 +16,14 @@
     "@reduxjs/toolkit": "^1.9.5",
     "expo": "~49.0.6",
     "expo-camera": "~13.4.4",
+    "expo-dev-client": "~2.4.11",
     "expo-document-picker": "~11.5.4",
     "expo-font": "~11.4.0",
     "expo-image-picker": "^14.5.0",
     "expo-location": "~16.1.0",
     "expo-media-library": "~15.4.1",
     "expo-status-bar": "~1.6.0",
-    "firebase": "^10.2.0",
+    "firebase": "^10.4.0",
     "react": "18.2.0",
     "react-native": "0.72.4",
     "react-native-gesture-handler": "~2.12.0",
@@ -33,8 +34,7 @@
     "react-native-vector-image": "^0.4.3",
     "react-redux": "^8.1.2",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.4.2",
-    "expo-dev-client": "~2.4.11"
+    "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

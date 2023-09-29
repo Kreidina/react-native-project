@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import {
   ImageBackground,
   StyleSheet,
@@ -9,9 +9,11 @@ import {
   FlatList,
   SafeAreaView,
   Text,
+  Alert,
 } from "react-native";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { useDispatch, useSelector } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
 
 import {
   selectAvatar,
@@ -23,26 +25,58 @@ import ProfileItem from "../../components/ProfiIetem";
 
 import { handelLogout } from "../../functions/helpers";
 import { getUserImage } from "../../functions/getRequest";
+import { storage } from "../../firebase/config";
+import { deleteObject, ref } from "firebase/storage";
+import { uploadToPhoto } from "../../functions/uploadFirebase";
+import { updateAvatarImg } from "../../redux/auth/operations";
 
 export const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [files, setFiles] = useState(null);
 
   const bgrImg = require("../../../assets/img/background.jpg");
 
   const name = useSelector(selectName);
   const userId = useSelector(selectUserId);
   const avatar = useSelector(selectAvatar);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("render Prof");
-
     getUserImage(userId, setPosts, "posts");
   }, []);
 
+  useEffect(() => {
+    if (files) {
+      dispatch(updateAvatarImg(files));
+    }
+  }, [files]);
+
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
+  };
+
+  const takePhoto = async () => {
+    try {
+      const cameraResp = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        quality: 1,
+      });
+
+      if (avatar) {
+        const decodedFilename = decodeURIComponent(avatar);
+        const parts = decodedFilename.split("/");
+        const filenameWithParams = parts[parts.length - 1];
+        const filename = filenameWithParams.split("?")[0];
+        const fileRef = ref(storage, `avatars/${filename}`);
+        await deleteObject(fileRef);
+      }
+
+      await uploadToPhoto(cameraResp, setFiles);
+    } catch (e) {
+      Alert.alert("Error Make Image " + e.message);
+      console.log(e.message);
+    }
   };
 
   return (
@@ -52,12 +86,18 @@ export const ProfileScreen = ({ navigation }) => {
           <View style={styles.bgrContainer}>
             <ImageBackground source={bgrImg} style={styles.bgrImage}>
               <View style={styles.contentContainer}>
-                {false ? (
+                {!avatar ? (
                   <View style={styles.avatarBox}>
+                    <Feather
+                      name="user"
+                      size={60}
+                      color="black"
+                      style={styles.avaIcon}
+                    />
                     <TouchableOpacity
                       activeOpacity={0.8}
                       style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      // onPress={takePhoto}
+                      onPress={takePhoto}
                     >
                       <AntDesign
                         name="pluscircleo"
@@ -68,12 +108,10 @@ export const ProfileScreen = ({ navigation }) => {
                   </View>
                 ) : (
                   <View style={styles.avatarBox}>
-                    {avatar && (
-                      <Image source={{ uri: avatar }} style={styles.avaImg} />
-                    )}
+                    <Image source={{ uri: avatar }} style={styles.avaImg} />
                     <TouchableOpacity
                       style={{ ...styles.avatarIcon, ...styles.avatarLink }}
-                      // onPress={setUri(null)}
+                      onPress={takePhoto}
                       activeOpacity={0.8}
                     >
                       <AntDesign
@@ -155,6 +193,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#F6F6F6",
   },
+  avaIcon: {
+    position: "absolute",
+    top: 28,
+    left: 30,
+  },
+
   avaImg: {
     borderRadius: 16,
     width: 120,

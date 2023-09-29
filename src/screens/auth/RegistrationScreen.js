@@ -18,9 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import RegisterForm from "../../components/RegisterForm";
 import CustomLink from "../../components/CustomLink";
-import { storage } from "../../firebase/config";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-
+import { uploadToPhoto } from "../../functions/uploadFirebase";
 export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
@@ -48,39 +46,6 @@ export const RegistrationScreen = ({ navigation }) => {
     );
   }
 
-  const uploadToFirebase = async (uri, name, onProgress) => {
-    const fetchResponse = await fetch(uri);
-    const theBlob = await fetchResponse.blob();
-
-    const imageRef = ref(storage, `avatars/${name}`);
-
-    const uploadTask = uploadBytesResumable(imageRef, theBlob);
-
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          onProgress && onProgress(progress);
-        },
-        (error) => {
-          console.log(error, "error");
-          reject(error);
-        },
-
-        async () => {
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          setFiles(downloadUrl);
-          resolve({
-            downloadUrl,
-            metadata: uploadTask.snapshot.metadata,
-          });
-        }
-      );
-    });
-  };
-
   const takePhoto = async () => {
     try {
       const cameraResp = await ImagePicker.launchCameraAsync({
@@ -89,24 +54,9 @@ export const RegistrationScreen = ({ navigation }) => {
         quality: 1,
       });
 
-      await uploadToPhoto(cameraResp);
+      await uploadToPhoto(cameraResp, setFiles);
     } catch (e) {
       Alert.alert("Error Make Image " + e.message);
-    }
-  };
-
-  const uploadToPhoto = async (cameraRef) => {
-    try {
-      if (!cameraRef.canceled) {
-        const { uri } = cameraRef.assets[0];
-
-        const fileName = uri.split("/").pop();
-
-        await uploadToFirebase(uri, fileName, (v) => console.log(v));
-      }
-    } catch (e) {
-      Alert.alert("Error Uploading Image " + e.message);
-      console.log(e.message);
     }
   };
 
