@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
 } from "react-native";
+import { addDoc, collection, doc } from "firebase/firestore";
 
 import { CommentsForm } from "../../components/CommentForm";
 import { CommentsItem } from "../../components/CommentsItem";
@@ -16,7 +17,6 @@ import Header from "../../components/Header";
 
 import { db } from "../../firebase/config";
 import { selectAvatar, selectUserId } from "../../redux/auth/selectors";
-import { addDoc, collection, doc } from "firebase/firestore";
 import { formattedDate, formattedTime } from "../../functions/dateCount";
 import { getAllComments } from "../../functions/getRequest";
 
@@ -42,7 +42,7 @@ export const CommentsScreen = ({ navigation, route }) => {
     const postsDocRef = doc(db, "posts", id);
     await addDoc(collection(postsDocRef, "comments"), {
       comment: value,
-      date: `${formattedDate} | ${formattedTime}`,
+      date: `${formattedDate} ${formattedTime}`,
       userId,
       avaImg: avatar,
     });
@@ -54,19 +54,6 @@ export const CommentsScreen = ({ navigation, route }) => {
   const backToPosts = () => {
     navigation.goBack();
   };
-
-  const parseDate = (dateString) => {
-    const [datePart, timePart] = dateString.split(" | ");
-    const [day, month, year] = datePart.split(" ");
-    const [hour, minute] = timePart.split(":");
-    return new Date(year, month - 1, day, hour, minute);
-  };
-
-  comments.sort((a, b) => {
-    const dateA = parseDate(a.date);
-    const dateB = parseDate(b.date);
-    return dateA - dateB;
-  });
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>

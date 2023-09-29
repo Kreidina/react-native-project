@@ -5,8 +5,10 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import uuid from "react-native-uuid";
-import { storage } from "../firebase/config";
 import { Alert } from "react-native";
+import { doc, runTransaction } from "firebase/firestore";
+
+import { db, storage } from "../firebase/config";
 
 export const uploadImage = async (uri) => {
   try {
@@ -82,5 +84,34 @@ export const uploadToPhoto = async (cameraRef, setFiles) => {
   } catch (e) {
     Alert.alert("Error Uploading Image " + e.message);
     console.log(e.message);
+  }
+};
+
+export const updateFavorites = async (postId, userId) => {
+  const postRef = doc(db, "posts", postId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const postDoc = await transaction.get(postRef);
+
+      if (!postDoc.exists) {
+        throw "Post document does not exist!";
+      }
+
+      const favorites = postDoc.data().favorite || [];
+      const userIndex = favorites.findIndex(
+        (favorite) => favorite.userId === userId
+      );
+
+      if (userIndex === -1) {
+        favorites.push({ userId });
+      } else {
+        favorites.splice(userIndex, 1);
+      }
+
+      transaction.update(postRef, { favorite: favorites });
+    });
+  } catch (error) {
+    console.error("Error adding/removing from favorites: ", error);
   }
 };

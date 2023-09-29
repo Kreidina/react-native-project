@@ -19,6 +19,7 @@ import * as ImagePicker from "expo-image-picker";
 import RegisterForm from "../../components/RegisterForm";
 import CustomLink from "../../components/CustomLink";
 import { uploadToPhoto } from "../../functions/uploadFirebase";
+
 export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeydoard] = useState(false);
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();

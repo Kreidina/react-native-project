@@ -1,7 +1,6 @@
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   StyleSheet,
   Text,
@@ -17,7 +16,6 @@ import {
   selectEmail,
   selectName,
 } from "../../redux/auth/selectors";
-
 import { handelLogout } from "../../functions/helpers";
 import { getAllPosts } from "../../functions/getRequest";
 import Item from "../../components/Item";

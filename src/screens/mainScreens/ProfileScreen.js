@@ -14,19 +14,17 @@ import {
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { useDispatch, useSelector } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
+import { deleteObject, ref } from "firebase/storage";
 
 import {
   selectAvatar,
   selectName,
   selectUserId,
 } from "../../redux/auth/selectors";
-
 import ProfileItem from "../../components/ProfiIetem";
-
 import { handelLogout } from "../../functions/helpers";
 import { getUserImage } from "../../functions/getRequest";
 import { storage } from "../../firebase/config";
-import { deleteObject, ref } from "firebase/storage";
 import { uploadToPhoto } from "../../functions/uploadFirebase";
 import { updateAvatarImg } from "../../redux/auth/operations";
 
@@ -62,6 +60,7 @@ export const ProfileScreen = ({ navigation }) => {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         quality: 1,
       });
+      await uploadToPhoto(cameraResp, setFiles);
 
       if (avatar) {
         const decodedFilename = decodeURIComponent(avatar);
@@ -71,8 +70,6 @@ export const ProfileScreen = ({ navigation }) => {
         const fileRef = ref(storage, `avatars/${filename}`);
         await deleteObject(fileRef);
       }
-
-      await uploadToPhoto(cameraResp, setFiles);
     } catch (e) {
       Alert.alert("Error Make Image " + e.message);
       console.log(e.message);
@@ -143,7 +140,7 @@ export const ProfileScreen = ({ navigation }) => {
                     <SafeAreaView>
                       <FlatList
                         data={posts}
-                        keyExtractor={(item, indx) => indx.toString()}
+                        keyExtractor={(item, index) => item.id}
                         renderItem={({ item }) => (
                           <ProfileItem
                             item={item}

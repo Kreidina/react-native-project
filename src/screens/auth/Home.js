@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 
 import { PostsScreen, ProfileScreen, CreatePostsScreen } from "../mainScreens";
-import { useSelector } from "react-redux";
 
 const MainTab = createBottomTabNavigator();
 export const Home = () => {

@@ -1,31 +1,30 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { AntDesign, FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import { addDoc, collection, doc } from "firebase/firestore";
-import { db } from "../firebase/config";
 import { getAllComments } from "../functions/getRequest";
+import { updateFavorites } from "../functions/uploadFirebase";
+import { selectUserId } from "../redux/auth/selectors";
 
 const ProfileItem = ({ item, navigateToScreen }) => {
   const [comments, setComments] = useState([]);
   const [countComment, setCountComment] = useState(0);
   const [countLike, setCountLike] = useState(0);
 
-  const { contentLocation, contentName, img, location, userId } = item;
+  const idUser = useSelector(selectUserId);
+
+  const { contentLocation, contentName, img, location, favorite } = item;
 
   useEffect(() => {
     getAllComments(item.id, setComments);
     setCountComment(comments.length);
+    setCountLike(favorite.length);
   }, [comments]);
 
-  const like = async () => {
-    try {
-      const postsDocRef = doc(db, "posts", item.id);
-      await addDoc(collection(postsDocRef, "likes"), {
-        userId,
-      });
-    } catch (e) {}
-  };
+  const postId = item.id;
+  const isFavorite = favorite.some((fav) => fav.userId === idUser);
+
   return (
     <View style={styles.container}>
       <Image source={{ uri: img }} style={styles.img} />
@@ -41,8 +40,11 @@ const ProfileItem = ({ item, navigateToScreen }) => {
               {countComment}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.link} onPress={like}>
-            {true ? (
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => updateFavorites(postId, idUser)}
+          >
+            {isFavorite ? (
               <AntDesign name="like1" size={24} style={styles.likeIcon} />
             ) : (
               <AntDesign name="like2" size={24} style={styles.likeIcon} />

@@ -4,10 +4,10 @@ import * as Location from "expo-location";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { CameraType, Camera } from "expo-camera";
 import { useSelector } from "react-redux";
+import { collection, addDoc } from "firebase/firestore";
 
 import { CreatePosts } from "../../components/CreatePosts";
 import { db } from "../../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
 import { selectName, selectUserId } from "../../redux/auth/selectors";
 import { keyboardHide } from "../../functions/helpers";
 import { uploadImage } from "../../functions/uploadFirebase";
@@ -100,6 +100,7 @@ export const CreatePostsScreen = ({ navigation }) => {
         img: photoUrl,
         userId,
         userName,
+        favorite: [],
       });
     } catch (error) {
       console.error("Error adding document: ", error);

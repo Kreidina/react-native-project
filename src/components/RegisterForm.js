@@ -1,11 +1,11 @@
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   KeyboardAvoidingView,
   StyleSheet,
   TextInput,
   View,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 
 import CustomLink from "./CustomLink";
 import CustomButton from "./CustomButton";

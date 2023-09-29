@@ -1,33 +1,61 @@
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
+import { FontAwesome, SimpleLineIcons, AntDesign } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 import { getAllComments } from "../functions/getRequest";
+import { selectUserId } from "../redux/auth/selectors";
+import { updateFavorites } from "../functions/uploadFirebase";
 
 const Item = ({ item, navigateToScreen }) => {
-  const [count, setCount] = useState(0);
+  const [countComment, setCountComment] = useState(0);
+  const [countLike, setCountLike] = useState(0);
   const [comments, setComments] = useState([]);
 
-  const { img, location, contentName, contentLocation } = item;
+  const idUser = useSelector(selectUserId);
+
+  const { img, location, contentName, contentLocation, favorite } = item;
 
   useEffect(() => {
     getAllComments(item.id, setComments);
-    setCount(comments.length);
+    setCountComment(comments.length);
+    setCountLike(favorite.length);
   }, [comments]);
+
+  const postId = item.id;
+  const isFavorite = favorite.some((fav) => fav.userId === idUser);
 
   return (
     <View style={styles.container}>
       <Image source={{ uri: img }} style={styles.img} />
       <Text style={styles.name}>{contentName}</Text>
       <View style={styles.info}>
+        <View style={styles.comLike}>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => navigateToScreen("Comments", { img, id: item.id })}
+          >
+            <FontAwesome
+              name="comment-o"
+              size={24}
+              style={styles.iconComment}
+            />
+            <Text style={styles.value}>{countComment}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => updateFavorites(postId, idUser)}
+          >
+            {isFavorite ? (
+              <AntDesign name="like1" size={24} style={styles.likeIcon} />
+            ) : (
+              <AntDesign name="like2" size={24} style={styles.iconComment} />
+            )}
+            <Text style={styles.value}>{countLike}</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
-          style={styles.linkComent}
-          onPress={() => navigateToScreen("Comments", { img, id: item.id })}
-        >
-          <FontAwesome name="comment-o" size={24} style={styles.iconComment} />
-          <Text style={styles.count}>{count}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.linkLocation}
+          style={styles.link}
           onPress={() => navigateToScreen("Map", { location })}
         >
           <SimpleLineIcons
@@ -66,14 +94,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  linkComent: {
+  value: {
+    color: "#BDBDBD",
+    marginRight: 6,
+  },
+  link: {
     flexDirection: "row",
     alignItems: "center",
   },
-  count: { color: "#BDBDBD" },
-  linkLocation: {
+  likeIcon: {
+    color: "#FF6C00",
+    marginRight: 6,
+  },
+  comLike: {
     flexDirection: "row",
-    alignItems: "center",
   },
   iconComment: {
     color: "#BDBDBD",

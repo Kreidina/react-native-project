@@ -11,7 +11,6 @@ export const getAllComments = async (id, setComments) => {
       commentsArray.push({ ...doc.data() });
     });
     setComments(commentsArray);
-    // setCountComment(commentsArray.length);
   } catch (error) {
     console.log("Comments error", error);
     throw error;

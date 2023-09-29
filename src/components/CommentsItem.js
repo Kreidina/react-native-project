@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import { selectUserId } from "../redux/auth/selectors";
 import { useSelector } from "react-redux";
+
+import { selectUserId } from "../redux/auth/selectors";
 
 export const CommentsItem = ({ comment }) => {
   const { avaImg, date, userId } = comment;
   const id = useSelector(selectUserId);
 
   const left = userId !== id;
-
-  // console.log(date);
 
   return (
     <>

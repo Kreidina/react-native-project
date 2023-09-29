@@ -1,9 +1,9 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import CustomLink from "./CustomLink";
 import CustomButton from "./CustomButton";
-import { useDispatch } from "react-redux";
 import { loginDB } from "../redux/auth/operations";
 
 const initialState = {
