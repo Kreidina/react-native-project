@@ -78,9 +78,19 @@ export const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  const publishSubmit = () => {
+  const publishSubmit = async () => {
+    const photoUrl = await uploadImage(photo);
+    const post = {
+      contentName: postContent.name,
+      contentLocation: postContent.location,
+      location: location.coords,
+      img: photoUrl,
+      userId,
+      userName,
+      favorite: [],
+    };
     writeDataToFirestore();
-    navigation.navigate("DefaultScreen");
+    navigation.navigate("DefaultScreen", { post });
   };
 
   const backToPosts = () => {

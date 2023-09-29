@@ -20,9 +20,16 @@ import { handelLogout } from "../../functions/helpers";
 import { getAllPosts } from "../../functions/getRequest";
 import Item from "../../components/Item";
 
-export const DefaultPostsScreen = ({ navigation }) => {
+export const DefaultPostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [isRefreshig, setIsRefreshig] = useState(false);
+
+  useEffect(() => {
+    if (route.params) {
+      const { post } = route.params;
+      setPosts((prevState) => [...prevState, post]);
+    }
+  }, [route]);
 
   const name = useSelector(selectName);
   const email = useSelector(selectEmail);
